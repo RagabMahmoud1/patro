@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_account_payment_form_4440" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="before">
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="use_discount"/>
+                    <field name="discount_name" attrs="{'invisible':[('use_discount','=',False)]}"/>
+                    <field name="discount_type" attrs="{'invisible':[('use_discount','=',False)]}"/>
+                    <field name="amount2" attrs="{'invisible':[('use_discount','=',False)]}"/>
+                    <field name="discount" attrs="{'invisible':[('use_discount','=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="attributes">
+                    <attribute name="attrs">{'readonly': ['|',('state', '!=', 'draft'),('use_discount', '!=', True)]}</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

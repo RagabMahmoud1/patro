@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <template id="invoice_agar_and_shaga_inherit" inherit_id="account.report_invoice_document">
+            <xpath expr="//p[@t-field='o.ref']" position="after">
+                 
+                    <p><span><strong>العقار </strong></span><span t-field="o.building"/></p>       
+                     <p><span><strong>الوحدة </strong></span><span t-field="o.building_unit"/></p>             
+                
+            </xpath>
+        </template>
+</odoo>
+<!-- style="padding-top:20px; padding-bottom:20px;"-->

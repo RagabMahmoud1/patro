@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="coupon_template" xml:space="preserve">
+    <t t-inherit="point_of_sale.OrderWidget" t-inherit-mode="extension">
+    <xpath expr="//div[hasclass('order')]" position="after">
+        <br/>
+           <strong>
+               Quantity Total: <strong t-esc="state.quantity_count"/>
+           </strong>
+    </xpath>
+  </t>
+</templates>

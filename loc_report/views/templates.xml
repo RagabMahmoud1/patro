@@ -1,0 +1,84 @@
+<odoo>
+    <data>
+<!--        <template id="assets" inherit_id="web.assets_backend">-->
+<!--            <xpath expr="." position="inside">-->
+<!--                <script type="text/javascript"-->
+<!--                        src="/loc_report/static/src/js/uom.js"></script>-->
+
+<!--            </xpath>-->
+<!--        </template>-->
+
+
+
+         <report
+                id="uom_report_action"
+                model="uom.report.wiz"
+                report_type="qweb-pdf"
+                string="Unit Of Measure Report"
+                name="loc_report.loc_report"
+                file="loc_report.loc_report"
+                attachment_use="False"
+                menu="True"
+        />
+
+        <template id="loc_report">
+            <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+
+                 <table class="table table-sm ">
+                     <tr style="border: 1px solid black;">
+                         <th>Print By</th>
+                         <th> <span t-esc='user.name'/></th>
+                     </tr>
+                     <tr style="border: 1px solid black;">
+                         <th>Print Date</th>
+                         <th>
+                             <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                         </th>
+                     </tr>
+                 </table>
+
+                 <table class="table table-sm o_main_table" style="border: 1px solid black;">
+
+
+                <tbody class="sale_tbody">
+                     <tr  style="background-color:green">
+                        <td style="border: 1px solid black;" class="text-center categ">
+                            <strong>Product Name</strong>
+                        </td>
+                         <td style="border: 1px solid black;" class="text-center categ">
+                            <strong>Product Barcode</strong>
+                        </td>
+                        <t t-foreach="locs" t-as="loc">
+                            <td style="border: 1px solid black;" class="text-center categ">
+                                <strong t-esc="loc"/>
+                            </td>
+                        </t>
+
+                    </tr>
+                    <t t-foreach="cloumns" t-as="cloumn">
+                        <tr style="border: 1px solid black;">
+                            <td style="border: 1px solid black;" class="text-center categ">
+                                <strong t-esc="cloumn['product_name']"/>
+                            </td>
+                             <td style="border: 1px solid black;" class="text-center categ">
+                                <strong t-esc="cloumn['product_barcode']"/>
+                            </td>
+                            <t t-foreach="locs" t-as="loc">
+                                <td style="border: 1px solid black;" class="text-center categ">
+                                    <strong t-esc="cloumn.get(loc)"/>
+                                </td>
+                            </t>
+                        </tr>
+                    </t>
+
+                </tbody>
+            </table>
+                </div>
+
+            </t>
+            </t>
+        </template>
+    </data>
+</odoo>

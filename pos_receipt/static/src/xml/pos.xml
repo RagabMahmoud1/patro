@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="point_of_sale.template" xml:space="preserve">
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+			        <xpath expr="//div[hasclass('pos-receipt')]" position="replace">
+						        <div class="pos-receipt">
+            <t t-if="receipt.company.logo">
+                <img class="pos-receipt-logo" t-att-src="receipt.company.logo" alt="Logo"/>
+                <br/>
+            </t>
+                                    <t t-if="!receipt.company.logo">
+                <h2 class="pos-receipt-center-align">
+                    <t t-esc="receipt.company.name"/>
+                </h2>
+                                        <br/>
+            </t>
+                                    <div class="pos-receipt-contact">
+                <span t-esc="receipt.branch_id"/>
+
+
+                                        <t t-if="receipt.name">
+                    <div style="direction: rtl;">رقم الطلب:<t t-esc="receipt.name"/></div>
+                </t>
+                                        <t t-if="receipt.date.localestring">
+                    <div style="direction: rtl;">تاريخ الطلب:<t t-esc="receipt.date.localestring"/></div>
+                </t>
+
+
+
+                                        <t t-if="receipt.sales_person_name">
+                    <div style="direction: rtl;">المندوب:<t t-esc="receipt.sales_person_name"/></div>
+                </t>
+                                        <t t-if="receipt.client">
+                    <div style="direction: rtl;">اسم العميل:<t t-esc="receipt.client.name"/></div>
+                </t>
+                                        <t t-if="receipt.client">
+                                        <t t-if="receipt.client.street">
+                    <div style="direction: rtl;">العنوان:<t t-esc="receipt.client.street"/></div>
+                </t>
+                </t>
+                                        <t t-if="receipt.client">
+                                        <t t-if="receipt.client.phone">
+                    <div style="direction: rtl;">الهاتف:<t t-esc="receipt.client.phone"/></div>
+                </t>
+                </t>
+            </div>
+                                    <br/>
+
+                                    <!-- Orderlines -->
+
+                                    <div class="text-right" style="text-align: right;">
+                <t t-call="OrderLinesReceipt"/>
+            </div>
+
+
+                                    <!-- Total -->
+                                    <br/>
+                                    <table class='receipt-total' style="direction:rtl">
+					<colgroup>
+						<col width='20%'/>
+                        <col width='40%'/>
+                        <col width='40%'/>
+					</colgroup>
+
+
+                                        <tr>
+						<td class="text-center" style="text-align: right;"></td>
+                                            <td class="text-center" style="text-align: right;">الاجمالي:</td>
+                                            <td class="text-center" style="text-align: right;" colspan="2">
+								<t t-esc="env.pos.format_currency_no_symbol(receipt.total_with_tax)"/>&#160;ج.م
+
+						</td>
+					</tr>
+				</table>
+                                    <br/>
+                                    <br/>
+
+                                    <!-- Payment Lines -->
+
+                                    <t t-foreach="receipt.paymentlines" t-as="line" t-key="line.cid">
+                <div>
+                    <t t-esc="line.name"/>
+                    <span t-esc="env.pos.format_currency_no_symbol(line.amount)" class="pos-receipt-right-align"/>
+                </div>
+            </t>
+                                    <br/>
+
+                                    <div class="pos-receipt-amount receipt-change">
+                الباقي
+                <span t-esc="env.pos.format_currency(receipt.change)" class="pos-receipt-right-align"/>
+            </div>
+                                    <br/>
+
+                                    <!-- Extra Payment Info -->
+
+                                    <div class="before-footer"/>
+
+                                    <!-- Footer -->
+                                    <div t-if="receipt.footer_html" class="pos-receipt-center-align">
+                <t t-raw="receipt.footer_html"/>
+            </div>
+
+                                    <div t-if="!receipt.footer_html and receipt.footer" class="pos-receipt-center-align"
+                                         style="white-space:pre-line">
+                <br/>
+                                        <t t-esc="receipt.footer"/>
+                                        <br/>
+                                        <br/>
+            </div>
+
+                                    <div class="after-footer">
+                <t t-foreach="receipt.paymentlines" t-as="line">
+                    <t t-if="line.ticket">
+                        <br/>
+                        <div class="pos-payment-terminal-receipt">
+                            <t t-raw="line.ticket"/>
+                        </div>
+                    </t>
+                </t>
+            </div>
+
+                                    <br/>
+
+        </div>
+					</xpath>
+
+
+    </t>
+    <t t-name="OrderLinesReceipt" owl="1" t-inherit="point_of_sale.OrderLinesReceipt" t-inherit-mode="extension">
+    <xpath expr="//t[@t-foreach='receipt.orderlines']" position="replace">
+        				<table class='receipt-orderlines' dir="rtl">
+					<colgroup>
+						<col width='45%'/>
+                        <col width='15%'/>
+                        <col width='15%'/>
+                        <col width='25%'/>
+					</colgroup>
+                            <tr style="border: 1px solid rgb(0, 0, 0);">
+						      <th class="text-right" style="text-align: right;">اسم الصنف</th>
+                                <th class="text-right" style="text-align: right;">الكمية</th>
+                                <th class="text-center" style="text-align: center;">السعر</th>
+                                <th class="text-left" style="text-align: left;">الإجمالي</th>
+					</tr>
+                            <tr t-foreach="receipt.orderlines" t-as="line" t-key="line.id"
+                                >
+                                                                    	        <td class="text-left"
+                                                                                    style="text-align: right;">
+							<t t-esc="line.product_name"/>
+
+                                                                                    <t t-if="line.discount > 0">
+								<div class="pos-disc-font">
+                                    With a
+
+
+									<t t-esc="line.discount"/>% خصم
+
+
+
+								</div>
+							</t>
+						</td>
+                                                                    <td class="text-right" style="text-align: right;">
+							<t t-esc="line.quantity"/>
+						</td>
+                                                                    <td class="text-left" style="text-align: center;">
+                                    <t t-esc="env.pos.format_currency_no_symbol(line.price_display_one)"/>
+						        </td>
+                                                                    <td class="text-left" style="text-align: left;">
+                                <span class="price_display pos-receipt-left-align">
+                        <t t-esc="env.pos.format_currency_no_symbol(line.price_display_one * line.quantity)"/>
+                    </span>
+                                </td>
+
+
+                            </tr>
+				</table>
+
+
+    </xpath>
+    </t>
+</templates>

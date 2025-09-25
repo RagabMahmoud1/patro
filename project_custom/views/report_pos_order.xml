@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="paperformat_posreceipt" model="report.paperformat">
+
+            <field name="name">Point Of Sale Receipt</field>
+
+            <field name="default" eval="True"/>
+
+            <field name="format">custom</field>
+
+            <field name="page_height">150</field>
+
+            <field name="page_width">70</field>
+
+            <field name="orientation">Portrait</field>
+
+            <field name="margin_top">30</field>
+
+            <field name="margin_bottom">3</field>
+
+            <field name="margin_left">3</field>
+
+            <field name="margin_right">3</field>
+
+            <field name="header_line" eval="False"/>
+
+            <field name="header_spacing">30</field>
+
+            <field name="dpi">130</field>
+
+        </record>
+
+        <template id="pos_order_template">
+            <t t-call="web.html_container">
+                <t t-set="TT" t-value="0"/>
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <t t-foreach="docs" t-as="o">
+                            <t t-set="o" t-value="o.with_context(lang=lang)"/>
+                            <h2>
+
+                                <span>فاتورة:</span>
+                                <span t-if="o.name != '/'" t-field="o.name"/>
+                            </h2>
+                            <div id="informations" class="row mt32 mb32">
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="o.date_order" name="date_order">
+                                    <strong>تاريخ الفاتورة</strong>
+                                    <p class="m-0" t-field="o.date_order"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id" name="partner_id">
+                                    <strong>اسم العميل</strong>
+                                    <p class="m-0" t-field="o.partner_id.name"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="o.user_id" name="user_id">
+                                    <strong>الكاشير</strong>
+                                    <p class="m-0" t-field="o.user_id"/>
+                                </div>
+
+
+                            </div>
+                            <table class="table table-bordered" style="font-size:13px;font-family:KacstLetter;"
+                                   t-if="o.lines">
+                                <tr style="line-height:1%">
+                                    <th class="text-right">كود</th>
+                                    <th class="text-right">الصنف</th>
+                                    <th class="text-right">الكمية</th>
+                                    <th class="text-right">السعر</th>
+                                    <th class="text-right">الخصم</th>
+                                    <th class="text-right">اجمالى القيمة</th>
+                                </tr>
+                                <t t-foreach="o.lines" t-as="line">
+                                    <tr style="line-height:1%">
+                                        <td class="text-right">
+                                            <span t-esc="line.product_id.default_code"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="line.product_id.description_sale"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="int(line.qty)"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="int(line.price_unit)"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="int(line.discount_val)"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="int(line.price_subtotal_incl)"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr class="border-black" style="background-color:#A0A0A0">
+                                    <td class="text-right">
+                                        <strong>الاجمالى</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        <span></span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="sum([line.qty for line in o.lines])"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span>0</span>
+                                    </td>
+
+                                    <td class="text-right">
+                                        <span t-esc="sum([line.discount_val for line in o.lines])"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-set="TT" t-value="TT+sum([line.price_subtotal_incl for line in o.lines])"/>
+                                        <span t-esc="sum([line.price_subtotal_incl for line in o.lines])"
+                                              t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <t t-if="docs">
+                            <table class="table table-bordered" style="font-size:13px;font-family:KacstLetter;"
+                                   t-if="o.lines">
+                                <tr style="line-height:1%">
+                                    <th class="text-right">الاجمالى</th>
+
+                                    <th class="text-right">
+                                        <span t-esc="TT"/>
+                                    </th>
+                                </tr>
+                            </table>
+
+                        </t>
+                    </div>
+                </t>
+
+
+            </t>
+        </template>
+
+
+        <report
+                id="receipt_report_action"
+                model="pos.order"
+                report_type="qweb-pdf"
+                string="All Orders"
+                name="project_custom.pos_order_template"
+                file="project_custom.pos_order_template"
+                paperformat="project_custom.paperformat_posreceipt"
+
+        />
+
+
+    </data>
+</odoo>

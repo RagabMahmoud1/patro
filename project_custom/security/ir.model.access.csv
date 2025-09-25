@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_ore,product_ore,model_product_ore,,1,1,1,1
+access_product_session,product_session,model_product_session,,1,1,1,1
+access_cash_wiz,cash_wiz,model_cash_wiz,,1,1,1,1
+access_cash_items,cash_items,model_cash_items,,1,1,1,1
+access_expenses_wiz,expenses_wiz,model_expenses_wiz,,1,1,1,1
+access_excel_download,excel_download,model_excel_download,,1,1,1,1
+acess_sales_wiz,sales_wiz,model_sales_wiz,,1,1,1,1

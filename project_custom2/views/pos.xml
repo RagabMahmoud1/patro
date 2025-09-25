@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+<!--
+     <record id="purchase_order_form_410" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="product_barcode"/>
+                </xpath>
+                    <xpath expr="//field[@name='order_line']//field[@name='product_qty']" position="attributes">
+                    <attribute name="sum">Total Quantity</attribute>
+                </xpath>
+
+
+            </field>
+        </record>
+-->
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_pos_pos_form_4440" model="ir.ui.view">
+            <field name="name">pos.order.form</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='lines']//tree//field[@name='full_product_name']" position="after">
+                    <field name="qty_available"/>
+                </xpath>
+                <xpath expr="//field[@name='lines']//tree//field[@name='discount']" position="after">
+                    <field name="discount_fixed"/>
+                </xpath>
+                <xpath expr="//field[@name='lines']//tree//field[@name='qty']" position="after">
+                    <field name="return_qty" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="sales_person" readonly="1"/>
+                    <field name="credit"/>
+                    <field name="debit"/>
+                    <field name="return_days"/>
+
+
+                </xpath>
+                <xpath expr="//field[@name='pricelist_id']" position="attributes">
+                    <attribute name="options">{"no_open": True, "no_create": True}</attribute>
+                </xpath>
+
+            </field>
+    </record>
+
+
+    
+        <record id="action_cash_register777" model="ir.actions.act_window">
+            <field name="name">حركة الكاش</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.bank.statement</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    <!-- Add Text Here -->
+                </p>
+                <p>
+                    <!-- More details about what a user can do with this object will be OK -->
+                </p>
+            </field>
+        </record>
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="menu_cash_register777_action" name="حركة الكاش" parent="point_of_sale.menu_point_of_sale"
+                  action="action_cash_register777" sequence="101"/>
+
+
+        <record id="product_product_tree_view_710" model="ir.ui.view">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='product_template_variant_value_ids']" position="after">
+                    <field name="product_template_attribute_value_ids" widget="many2many_tags"/>
+                    <field name="barcode"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="quant_search_view_7700" model="ir.ui.view">
+            <field name="name">stock.quant.search</field>
+            <field name="model">stock.quant</field>
+            <field name="inherit_id" ref="stock.quant_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <field name="barcode2"/>
+                </xpath>
+
+
+            </field>
+        </record>
+
+        <record id="stock_product_search_form_view_7410" model="ir.ui.view">
+            <field name="name">product.product.search</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="stock.stock_product_search_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <field name="barcode2"/>
+                </xpath>
+
+
+            </field>
+        </record>
+        <record id="mrp_product_product_search_view_7410" model="ir.ui.view">
+            <field name="name">product.product.search</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="mrp.mrp_product_product_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <field name="barcode2"/>
+                </xpath>
+
+
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_stock_quant_tree_inventory_editable2">
+            <field name="name">stock.quant.inventory.tree.editable</field>
+            <field name="model">stock.quant</field>
+            <field eval="10" name="priority"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0"
+                      default_order="location_id, inventory_date, product_id, package_id, lot_id, owner_id"
+                      decoration-warning='is_outdated' editable="bottom" import="1" js_class="singleton_list"
+                      sample="1">
+                    <header>
+                        <button name="stock.action_stock_inventory_adjustement_name" groups="stock.group_stock_manager"
+                                type="action" string="Apply"/>
+                        <button name="action_reset" type="object" string="Clear"/>
+                        <button name="stock.action_stock_request_count" groups="stock.group_stock_manager" type="action"
+                                string="Request a Count"/>
+                    </header>
+                    <field name="id" invisible="1"/>
+                    <field name="is_outdated" invisible="1"/>
+                    <field name="tracking" invisible="1"/>
+                    <field name="inventory_quantity_set" invisible="1"/>
+                    <field name="location_id" domain="[('usage', 'in', ['internal', 'transit'])]"
+                           attrs="{'readonly': [('id', '!=', False)]}" invisible="context.get('hide_location', False)"
+                           options="{'no_create': True}"/>
+                    <field name="product_id" attrs="{'readonly': [('id', '!=', False)]}"
+                           readonly="context.get('single_product', False)" force_save="1"
+                           options="{'no_create': True}"/>
+                    <field name="ore_id"/>
+                    <field name="session_id"/>
+                    <field name="list_price"/>
+                    <field name="standard_price"/>
+                    <field name="barcode2"/>
+                    <field name="product_template_attribute_value_ids" widget="many2many_tags"/>
+                    <field name="product_categ_id" optional="hide"/>
+                    <field name="lot_id" groups="stock.group_production_lot"
+                           attrs="{'readonly': ['|', ('id', '!=', False), ('tracking', 'not in', ['serial', 'lot'])]}"
+                           invisible="context.get('hide_lot', False)"
+                           context="{'default_product_id': product_id, 'default_company_id': company_id}"/>
+                    <field name="package_id" groups="stock.group_tracking_lot"
+                           attrs="{'readonly': [('id', '!=', False)]}"/>
+                    <field name="owner_id" groups="stock.group_tracking_owner"
+                           attrs="{'readonly': [('id', '!=', False)]}" options="{'no_create': True}"/>
+
+                    <field name="quantity" optional="show" string="On Hand Quantity" sum="Total"/>
+                    <field name="virtual_available" optional="show" string="On Hand Quantity" sum="Total"/>
+                    <field name="product_uom_id" groups="uom.group_uom" string="UoM"/>
+
+                    <field name='company_id' groups="base.group_multi_company" optional="hide"/>
+                    <button name="action_inventory_history" type="object" class="btn btn-link text-info"
+                            icon="fa-history" string="History"/>
+
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="action_view_quants2"> <!-- Menu + python -->
+            <field name="name">Inventory</field>
+            <field name="model_id" ref="model_stock_quant"/>
+            <field name="state">code</field>
+            <field name="groups_id" eval="[(4, ref('stock.group_stock_user'))]"/>
+            <field name="code">
+                action = model.with_context(
+                search_default_internal_loc=1,
+                search_default_productgroup=1,
+                search_default_locationgroup=1,
+                ).action_view_quants2()
+            </field>
+        </record>
+
+
+        <menuitem id="menu_valuation" name="Inventory Report"
+                  parent="point_of_sale.menu_point_rep" sequence="3"
+                  action="action_view_quants2"/>
+
+
+        <record id="group_button_reopen" model="res.groups">
+            <field name="name">Reset to New</field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_bank_statement_form_520" model="ir.ui.view">
+            <field name="name">account.bank.statement.form</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='line_ids']//tree//field[@name='payment_ref']" position="after">
+                    <field name="item_id"/>
+                </xpath>
+                <xpath expr="//button[@name='button_reopen']" position="attributes">
+                    <attribute name="groups">project_custom.group_button_reopen</attribute>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="cash_items_view_form" model="ir.ui.view">
+            <field name="name">Cash items</field>
+            <field name="model">cash.items</field>
+            <field name="arch" type="xml">
+                <form string="cash_items_form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="account_id"/>
+
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="cash_items_view_tree" model="ir.ui.view">
+            <field name="name">بنود المصروفات</field>
+            <field name="model">cash.items</field>
+            <field name="arch" type="xml">
+                <tree string="cash_items_tree">
+                    <field name="name"/>
+                    <field name="account_id"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_items" model="ir.actions.act_window">
+            <field name="name">بنود المصروفات</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">cash.items</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    <!-- Add Text Here -->
+                </p>
+                <p>
+                    <!-- More details about what a user can do with this object will be OK -->
+                </p>
+            </field>
+        </record>
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="menu_items_exp_action" name="بنود المصروفات" parent="point_of_sale.menu_point_of_sale"
+                  action="action_items" sequence="100"/>
+
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="purchase_order_form_410" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="product_barcode"/>
+                </xpath>
+
+    <xpath expr="//field[@name='order_line']//field[@name='product_qty']" position="attributes">
+                    <attribute name="sum">Total Quantity</attribute>
+                </xpath>
+
+
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

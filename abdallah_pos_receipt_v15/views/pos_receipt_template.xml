@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<odoo>
+<!--<template id="receipt_ext_js"  inherit_id="web.assets_backend">-->
+<!--    <xpath expr="." position="inside">-->
+<!--    	&lt;!&ndash; <script type="text/javascript" src="/ob_pos_custom_arabic_recpt/static/src/js/JsBarcode.all.min.js" /> &ndash;&gt;-->
+<!--        <script type="text/javascript" src="/ob_pos_custom_arabic_recpt/static/src/js/models.js" />-->
+<!--        <script type="text/javascript" src="/ob_pos_custom_arabic_recpt/static/src/js/OrderReceipt.js" />-->
+<!--        <script type="text/javascript" src="/ob_pos_custom_arabic_recpt/static/src/js/LineNoteButton.js" />-->
+<!--        <script type="text/javascript" src="/ob_pos_custom_arabic_recpt/static/src/js/PaymentScreen.js" />-->
+<!--    </xpath>-->
+<!--</template>-->
+</odoo>

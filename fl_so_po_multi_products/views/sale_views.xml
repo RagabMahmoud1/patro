@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="sale_order_view_multi_product_selection_inherit">
+        <field name="name">sale.order.view.multi.product.selection.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']" position="before">
+                <group>
+                    <button name="%(act_open_select_products_view)d" type="action" string="Select Products"
+                        context="{'default_flag_order': 'so'}" attrs="{'invisible': [('state', '!=', 'draft')]}"
+                        class="oe_highlight" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+<record model="ir.ui.view" id="view_picking_form_multi_product_selection_inherit">
+        <field name="name">stock.picking.form.multi.product.selection.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='move_ids_without_package']" position="before">
+                <group>
+                    <button name="%(act_open_select_products_view)d" type="action" string="Select Products"
+                        context="{'default_flag_order': 'stock'}" attrs="{'invisible': [('state', '!=', 'draft')]}"
+                        class="oe_highlight" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

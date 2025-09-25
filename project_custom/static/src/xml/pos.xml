@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+	<t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+         <xpath expr="//t[@t-if='isTaxIncluded']" position="replace">
+         </xpath>
+         <xpath expr="//div[@class='pos-receipt-contact']" position="after">
+                    <hr/>
+             <div class="pos-receipt-contact">
+                <t t-if="receipt.name">
+                    <div>Order No:<t t-esc="receipt.sequence_number"/></div>
+
+                </t>
+
+                 <t t-if="receipt.client">
+                                        <div>Cutomer Name:<t t-esc="receipt.client.name"/></div>
+
+                </t>
+                 <t t-if="receipt.client.phone">
+                                                                                                  <div>Cutomer Phone:<t
+                                                                                                          t-esc="receipt.client.phone"/></div>
+
+
+                </t>
+
+
+            </div>
+
+                </xpath>
+        <xpath expr="//div[@class='pos-receipt-order-data']" position="replace">
+              <div class="pos-receipt-order-data">
+                <div></div>
+                  <t t-if="receipt.date.localestring">
+                    <div><t t-esc="receipt.date.localestring" /></div>
+                </t>
+                  <t t-else="">
+                    <div><t t-esc="receipt.date.validation_date" /></div>
+                </t>
+            </div>
+
+                </xpath>
+<!--        <xpath expr="//div[@class='pos-receipt-order-data']" position="after">-->
+<!--            <span>-->
+<!--                المرتجع خلال-->
+<!--                <span t-esc="env.pos.config.return_days"/>-->
+<!--                يوم-->
+<!--            </span>-->
+<!--        </xpath>-->
+        <!--        <xpath expr="//div[@class='pos-receipt-contact']" position="after">-->
+        <!--                    <hr/>-->
+        <!--            <div class="pos-receipt-contact">-->
+
+        <!--                                    <t t-if="receipt.client">-->
+        <!--                    <div>اسم العميل:<t t-esc="receipt.client.name"/></div>-->
+        <!--                </t>-->
+        <!--                <t t-if="receipt.client.phone">-->
+        <!--                    <div>رقم العميل:<t t-esc="receipt.client.phone"/></div>-->
+        <!--                </t>-->
+
+        <!--            </div>-->
+
+        <!--                </xpath>-->
+    </t>
+    <t t-name="OrderLinesReceipt" owl="1" t-inherit="point_of_sale.OrderLinesReceipt" t-inherit-mode="extension">
+            <xpath expr="//t[@t-foreach='receipt.orderlines']" position="replace">
+        <t t-foreach="receipt.orderlines" t-as="line" t-key="line.id">
+            <t t-if="isSimple(line)">
+                <div>
+                    <t t-esc="line.product_name_wrapped[0]"/>
+                    <span t-esc="env.pos.format_currency_no_symbol(line.price_lst)"
+                          class="price_display pos-receipt-right-align"/>
+                </div>
+                <WrappedProductNameLines line="line"/>
+                <div t-if="line.price_lst>line.price">
+                        Discount: <t t-esc="line.price_lst-line.price"/>
+                    </div>
+                Barcode:
+                <span t-if="line.barcode" t-esc="line.barcode"/>
+            </t>
+            <t t-else="">
+                <div t-esc="line.product_name_wrapped[0]"/>
+                <WrappedProductNameLines line="line"/>
+                <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
+                    <div class="pos-receipt-left-padding">
+                        <t t-esc="env.pos.format_currency_no_symbol(line.price_lst)"/>
+                        ->
+                        <t t-esc="env.pos.format_currency_no_symbol(line.price)"/>
+                    </div>
+                    <t>
+
+                </t>
+                    <div t-if="line.price_lst>line.price">
+                        Discount: <t t-esc="line.price_lst-line.price"/>
+                    </div>
+                    Barcode:
+                    <span t-if="line.barcode" t-esc="line.barcode"/>
+
+                </t>
+                <t t-elif="line.discount !== 0">
+                    <div class="pos-receipt-left-padding">
+                        <t t-if="env.pos.config.iface_tax_included === 'total'">
+                            <t t-esc="env.pos.format_currency_no_symbol(line.price_with_tax_before_discount)"/>
+                        </t>
+                        <t t-else="">
+                            <t t-esc="env.pos.format_currency_no_symbol(line.price)"/>
+                        </t>
+                    </div>
+                </t>
+                <t t-if="line.discount !== 0">
+                    <div class="pos-receipt-left-padding">
+                        Discount: <t t-esc="line.discount"/>%
+                    </div>
+                </t>
+
+                <div class="pos-receipt-left-padding">
+                    <t t-esc="Math.round(line.quantity * Math.pow(10, env.pos.dp['Product Unit of Measure'])) / Math.pow(10, env.pos.dp['Product Unit of Measure'])"/>
+                    <t t-if="!line.is_in_unit" t-esc="line.unit_name"/>
+                    x
+                    <t t-esc="env.pos.format_currency_no_symbol(line.price_display_one)"/>
+                    <span class="price_display pos-receipt-right-align">
+                        <t t-esc="env.pos.format_currency_no_symbol(line.price_lst)"/>
+                    </span>
+                </div>
+            </t>
+            <t t-if="line.customer_note">
+                <div class="pos-receipt-left-padding pos-receipt-customer-note">
+                    <t t-esc="line.customer_note"/>
+                </div>
+            </t>
+            <t t-if="line.pack_lot_lines">
+                <div class="pos-receipt-left-padding">
+                    <ul>
+                        <t t-foreach="line.pack_lot_lines" t-as="lot" t-key="lot.cid">
+                            <li>
+                                SN <t t-esc="lot.attributes['lot_name']"/>
+                            </li>
+                        </t>
+                    </ul>
+                </div>
+            </t>
+        </t>
+            </xpath>
+    </t>
+
+    <t t-name="NumpadWidget" t-inherit="point_of_sale.NumpadWidget" t-inherit-mode="extension" owl="1">
+                        <xpath expr="//div[@class='numpad']" position="replace">
+                                    <div class="numpad">
+            <button class="input-button number-char" t-on-click="sendInput('1')">1</button>
+                                        <button class="input-button number-char" t-on-click="sendInput('2')">2</button>
+                                        <button class="input-button number-char" t-on-click="sendInput('3')">3</button>
+                                        <button class="mode-button"
+                                                t-att-class="{'selected-mode': props.activeMode === 'quantity'}"
+                                                t-on-click="changeMode('quantity')">Qty</button>
+                                        <br/>
+                                        <button class="input-button number-char" t-on-click="sendInput('4')">4</button>
+                                        <button class="input-button number-char" t-on-click="sendInput('5')">5</button>
+                                        <button class="input-button number-char" t-on-click="sendInput('6')">6</button>
+                                        <button class="mode-button" t-att-class="{
+                        'selected-mode': props.activeMode === 'discount',
+                        'disabled-mode': !hasManualDiscount
+                    }"
+                                                t-att-disabled="!hasManualDiscount"
+                                                t-on-click="changeMode('discount')">Disc</button>
+                                        <br/>
+                                        <button class="input-button number-char" t-on-click="sendInput('7')">7</button>
+                                        <button class="input-button number-char" t-on-click="sendInput('8')">8</button>
+                                        <button class="input-button number-char" t-on-click="sendInput('9')">9</button>
+                                        <button style="display:none;" class="mode-button" t-att-class="{
+                    'selected-mode': props.activeMode === 'price',
+                    'disabled-mode': !hasPriceControlRights
+                }" t-att-disabled="!hasPriceControlRights"
+                                                t-on-click="changeMode('price')">Price</button>
+                                        <br/>
+                                        <button style="display:none;" class="input-button numpad-minus"
+                                                t-att-class="{ 'disabled-mode': props.disableSign }"
+                                                t-on-click="sendInput('-')">+/-</button>
+                                        <button class="input-button number-char" t-on-click="sendInput('0')">0</button>
+                                        <button class="input-button number-char"
+                                                t-on-click="sendInput(decimalSeparator)">
+                <t t-esc="decimalSeparator"/>
+            </button>
+                                        <button class="input-button numpad-backspace"
+                                                t-on-click="sendInput('Backspace')">
+                <img style="pointer-events: none;" src="/point_of_sale/static/src/img/backspace.png"
+                     width="24" height="21" alt="Backspace"/>
+            </button>
+        </div>
+
+                        </xpath>
+
+    </t>
+
+
+    <t t-name="SelectionPopup2" owl="1">
+        <div role="dialog" class="modal-dialog">
+            <Draggable>
+                <div class="popup popup-selection">
+                    <header class="title drag-handle">
+                        <t t-esc="props.title"/>
+                    </header>
+                    <input type="text" class="search_pricelist pull-right p-0 pb-1" placeholder="Search..."
+                           t-on-keyup="updatePriceList"/>
+                    <br/>
+                    <br/>
+                    <br/>
+
+                    <div class="selection scrollable-y">
+                        <t t-foreach="props.list" t-as="item" t-key="item.id">
+                            <div class="selection-item" t-att-class="{ selected: item.isSelected }"
+                                 t-on-click="selectItem(item.id)">
+                                <t t-esc="item.label"/>
+                            </div>
+                        </t>
+                    </div>
+                    <footer class="footer">
+                        <div class="button cancel" t-on-click="cancel">
+                            <t t-esc="props.cancelText"/>
+                        </div>
+                    </footer>
+                </div>
+            </Draggable>
+        </div>
+    </t>
+
+    <t t-name="CashMovePopup" t-inherit="point_of_sale.CashMovePopup" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[@class='modal-dialog']" position="replace">
+                    <div role="dialog" class="modal-dialog">
+            <Draggable>
+                <div class="popup drag-handle">
+                    <main class="body">
+                        <div class="cash-move">
+                            <div class="input-amount">
+                                <span t-on-click="onClickButton('in')" class="input-type"
+                                      t-att-class="{ highlight: state.inputType == 'in' }">
+                                    Cash In
+                                </span>
+                                <span t-on-click="onClickButton('out')" class="input-type"
+                                      t-att-class="{ highlight: state.inputType == 'out' }">
+                                    Cash Out
+                                </span>
+                                <div class="input-field">
+                                    <input type="text" name="amount" t-model="state.inputAmount"
+                                           t-ref="input-amount-ref"/>
+                                    <span class="currency" t-esc="env.pos.currency.symbol"/>
+                                </div>
+                            </div>
+                            <div>
+								<span>بند</span>
+							</div>
+                            <div>
+								<select class="type" style="width: 233px;height:46px" t-model="state.item_id"
+                                        required="">
+									<t t-foreach="env.pos.items" t-as="item_id" t-key="item_id.name">
+										<option t-att-value="item_id.id" t-esc="item_id.name"/>
+									</t>
+								</select>
+							</div>
+                            <textarea name="reason" t-model="state.inputReason" placeholder="Reason"></textarea>
+                            <span t-if="state.inputHasError" class="error-message">
+                                <t t-esc="errorMessage"/>
+                            </span>
+                        </div>
+                    </main>
+                    <footer class="footer">
+                        <div class="button confirm disable" t-on-click="confirm">
+                            Confirm
+                        </div>
+                        <div class="button cancel" t-on-click="cancel">
+                            <t t-esc="props.cancelText"/>
+                        </div>
+                    </footer>
+                </div>
+            </Draggable>
+        </div>
+
+        </xpath>
+        </t>
+
+    <t t-name="SetPricelistButton" t-inherit="point_of_sale.SetPricelistButton" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[@class='control-button o_pricelist_button']" position="replace">
+            <t t-if="env.pos.get_cashier().can_edit_price_list">
+                            <div class="control-button o_pricelist_button">
+            <i class="fa fa-th-list" role="img" aria-label="Price list" title="Price list"/>
+                                <t t-esc="currentPricelistName"/>
+        </div>
+            </t>
+
+
+
+        </xpath>
+     </t>
+    <t t-name="ClientDetailsEdit" t-inherit="point_of_sale.ClientDetailsEdit" t-inherit-mode="extension" owl="1">
+
+        <xpath expr="//option[@t-att-value='pricelist.id']" position="replace">
+              <option t-att-disabled="props.partner.property_product_pricelist" t-att-value="pricelist.id"
+                      t-att-selected="props.partner.property_product_pricelist ? (pricelist.id === props.partner.property_product_pricelist[0] ? true : false) : false">
+                                    <t t-esc="pricelist.display_name"/>
+                                </option>
+        </xpath>
+        </t>
+    <t t-name="ClientListScreen" t-inherit="point_of_sale.ClientListScreen" t-inherit-mode="extension" owl="1">
+      <xpath expr="//th[@class='client-line-open-link']" position="replace">
+                      <t t-if="env.pos.get_cashier().can_edit_price_list">
+
+          <th class="client-line-open-link"></th>
+                      </t>
+
+        </xpath>
+    </t>
+    <t t-name="ClientLine" t-inherit="point_of_sale.ClientLine" t-inherit-mode="extension" owl="1">
+      <xpath expr="//td[@class='client-line-open-link']" position="replace">
+                      <t t-if="env.pos.get_cashier().can_edit_price_list">
+
+         <td class="client-line-open-link" t-att-class="highlight">
+                <a t-att-href="getPartnerLink()" target="_blank" t-on-click.stop=""><i class="fa fa-external-link" aria-hidden="true"></i></a>
+            </td>
+                      </t>
+        </xpath>
+    </t>
+    <t t-name="TicketScreen" t-inherit="point_of_sale.TicketScreen" t-inherit-mode="extension" owl="1">
+      <xpath expr="//t[@t-foreach='_filteredOrderList']//div" position="attributes">
+                  <attribute name="t-if">check_days(order)</attribute>
+
+      </xpath>
+
+
+
+    </t>
+
+        <t t-name="POSSalesPersonButton" owl="1">
+        <div class='control-button'>
+            <div class="pos-coupons">
+                <i class='fa fa-clock-o' />
+                Set  Sales Person
+            </div>
+        </div>
+    </t>
+
+    <t t-name="POSSalesPersonPopup" owl="1">
+        <div role="dialog" class="modal-dialog">
+            <Draggable>
+                <div class="popup popup-text">
+                    <header class="title">
+                        <div class="row">
+                            <t t-esc="props.title" />
+                        </div>
+                    </header>
+                    <main class="body product_configurator_attributes col-lg-4 col-md-6 col-sm-12">
+                        <div class="row">
+                            <div>
+                                <span> Sales Person</span>
+                            </div>
+                            <div>
+                                <select class="type" style="width: 233px;height:46px" t-model="state.sales_person" required="">
+                                    <t t-foreach="env.pos.salespersons" t-as="sales_person" t-key="sales_person.name">
+                                        <option t-att-value="sales_person.id" t-esc="sales_person.name" />
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <br/>
+
+                    </main>
+                    <footer class="footer">
+                        <div class="button confirm-coupon" t-on-click="click_confirm">
+                            Select
+                        </div>
+                        <div class="button cancel" t-on-click="cancel">
+                            Cancel
+                        </div>
+                    </footer>
+                </div>
+            </Draggable>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <!--Template for vertical type reports-->
+    <t t-name="report_uom">
+        <style>.o_control_panel{display: none;}</style>
+        <div class="main_report" style="overflow: scroll;">
+            <table class="table table-sm o_main_table" style="border: 1px solid black;">
+
+
+                <tbody class="sale_tbody">
+                    <tr  style="background-color:green">
+                        <td style="border: 1px solid black;" class="text-center categ">
+                            <strong>Product Name</strong>
+                        </td>
+                        <td style="border: 1px solid black;" class="text-center categ">
+                            <strong>Product Barcode</strong>
+                        </td>
+                        <t t-foreach="locs" t-as="loc">
+                            <td style="border: 1px solid black;" class="text-center categ">
+                                <strong t-esc="loc"/>
+                            </td>
+                        </t>
+
+                    </tr>
+                    <t t-foreach="cloumns" t-as="cloumn">
+                        <tr style="border: 1px solid black;">
+                            <td style="border: 1px solid black;" class="text-center categ">
+                                <strong t-esc="cloumn['product_name']"/>
+                            </td>
+                            <td style="border: 1px solid black;" class="text-center categ">
+                                <strong t-esc="cloumn['product_barcode']"/>
+                            </td>
+                            <t t-foreach="locs" t-as="loc">
+                                <td style="border: 1px solid black;" class="text-center categ">
+                                    <strong t-esc="cloumn[loc]"/>
+                                </td>
+                            </t>
+                        </tr>
+
+
+                    </t>
+
+
+                </tbody>
+            </table>
+
+        </div>
+    </t>
+
+
+</templates>

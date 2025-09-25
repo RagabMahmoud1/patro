@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="product_temp_barcode_labels">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="doc">
+                <t t-foreach="range(doc.qty)" t-as='l'>
+                    <t t-foreach="doc.product_id.seller_ids" t-as="seller">
+                        <tr t-if="seller">
+                        </tr>
+                    </t>
+                    <div class="page" style="text-align:center">
+                        <div class="row" style="border:1pt solid black;height:26mm;width:57mm">
+                            <div style="width:65%">
+                                <div style="font-size:10px;margin-top:4px;margin-bottom:6px">
+                                    <strong t-esc="doc.product_id.name"/>
+                                </div>
+
+                                <t t-set="barcode_info" t-value="get_barcode_details_info"/>
+                                <t t-if="doc.product_id.barcode">
+                                            <img alt="Barcode"
+                                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % (barcode_info['barcode_type'], doc.product_id.barcode, 600, 100)"
+                                                 t-attf-style="width: #{barcode_info['barcode_width']}px;height: #{barcode_info['barcode_height']}px;"
+                                            />
+                                    <br/>
+
+                                    <span style="font-size:10px" t-field="doc.product_id.barcode" />
+                                </t>
+
+                            </div>
+                            <div  style="width:35%">
+                                <div style="height:13mm;font-size:10px;margin:2px" class="text-right">
+                                    <t t-if="doc.product_id.default_code">
+                                        <span t-field="doc.product_id.default_code"/>
+                                    </t>
+                                    <br/>
+                                     <t t-if="doc.product_id.barcode_value">
+                                        <span t-field="doc.product_id.barcode_value"/>
+                                    </t>
+
+
+                                </div>
+                                <div style="height:13mm;text-align:right;font-size:10px;margin:2px;vertical-align:bottom"  >
+                                        <span t-field="doc.product_id.list_price"/>
+                                        <span t-field="doc.product_id.currency_id.symbol"/>
+
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+<!--                        <div class="col-4" style="padding:0;">-->
+<!--                            <table style="border-bottom: 0px solid white !important;width: 3in;">-->
+<!--                                <t t-set="barcode_info" t-value="get_barcode_details_info"/>-->
+<!--                                <tr>-->
+<!--                                    <th style="text-align: center;font-size:11px">-->
+<!--                                        <strong t-esc="doc.product_id.name"/>-->
+<!--                                    </th>-->
+<!--                                </tr>-->
+<!--                                <tr>-->
+<!--                                    <td style="text-align: center;font-size:11px">-->
+<!--                                        <span t-field="doc.product_id.default_code"/>-->
+<!--                                        <span t-field="doc.product_id.list_price" />-->
+
+<!--                                    </td>-->
+<!--                                </tr>-->
+<!--                                <t t-if="doc.product_id.barcode">-->
+<!--                                    <tr>-->
+<!--                                        <td style="text-align: center; vertical-align: middle;" class="col-5">-->
+<!--                                            <img alt="Barcode"-->
+<!--                                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % (barcode_info['barcode_type'], doc.product_id.barcode, 600, 100)"-->
+<!--                                                 t-attf-style="width: #{barcode_info['barcode_width']}px;height: #{barcode_info['barcode_height']}px;"-->
+<!--                                            />-->
+<!--                                            <br/>-->
+<!--                                            <span t-field="doc.product_id.barcode" style="font-size:11px"/>-->
+<!--                                            <br/>-->
+<!--                                            <span t-field="doc.product_id.barcode_value" style="font-size:11px"/>-->
+<!--                                            <br/>-->
+<!--                                            <br/>-->
+
+
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                </t>-->
+
+
+<!--                            </table>-->
+<!--                        </div>-->
+                    </div>
+                    <div style="page-break-before:always;"/>
+                </t>
+                <div style="page-break-before:always;"/>
+                <!--                </t>-->
+            </t>
+        </t>
+    </template>
+</odoo>

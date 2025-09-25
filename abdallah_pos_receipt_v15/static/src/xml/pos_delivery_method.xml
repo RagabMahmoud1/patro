@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="SetDeliveryMethodButton" owl="1">
+        <div class='control-button'>
+            <i class='fa fa-user' role="img" aria-label="Set Sales Person Receipt"
+               title="Set Sales Person Receipt"/>
+            <t t-if="state.name">
+                <t class='delivery_type'
+                   t-esc='state.name'/>
+            </t>
+            <t t-else="">
+                <span class='delivery_type'>Set Sales Person Receipt</span>
+            </t>
+        </div>
+    </t>
+</templates>

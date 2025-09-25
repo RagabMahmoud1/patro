@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="cash_form_wiz">
+            <field name="name">Cash In/Out</field>
+            <field name="model">cash.wiz</field>
+            <field name="arch" type="xml">
+                <form string="create Part Payment">
+                    <group>
+                        <field name="date"/>
+                        <field name="type"/>
+                        <field name="journal_id" domain="[('type','=','cash')]"/>
+                        <field name="item_id"/>
+                        <field name="amount"/>
+                        <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button string="Ok" name="make" type="object" class="btn-primary"/>
+                        <button string="Close" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_cash_form" model="ir.actions.act_window">
+            <field name="name">Cash In/Out</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">cash.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="cash_form_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="menu_cash_action" name="Cash In/Out" parent="point_of_sale.menu_point_of_sale" action="action_cash_form" sequence="7"/>
+    </data>
+</odoo>
