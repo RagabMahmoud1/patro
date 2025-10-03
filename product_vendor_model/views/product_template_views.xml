@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+
+    <!-- Product Model Tree View -->
+    <record id="view_product_model_tree" model="ir.ui.view">
+        <field name="name">product.model.tree</field>
+        <field name="model">product.model</field>
+        <field name="arch" type="xml">
+            <tree string="Product Models">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Product Model Form View -->
+    <record id="view_product_model_form" model="ir.ui.view">
+        <field name="name">product.model.form</field>
+        <field name="model">product.model</field>
+        <field name="arch" type="xml">
+            <form string="Product Model">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action linking views -->
+    <record id="action_product_model" model="ir.actions.act_window">
+        <field name="name">Product Models</field>
+        <field name="res_model">product.model</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_product_model_tree"/>
+    </record>
+
+
+    <menuitem id="menu_product_model_action" parent="point_of_sale.pos_config_menu_catalog" action="action_product_model"/>
+
+    <record id="view_product_template_inherit_vendor_model" model="ir.ui.view">
+        <field name="name">product.template.inherit.vendor.model</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='barcode']" position="after">
+                    <field name="vendor_id"/>
+                    <field name="model_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
