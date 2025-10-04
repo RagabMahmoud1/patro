@@ -1,14 +1,14 @@
 <odoo>
-    <!-- Server Action to reset attribute lines -->
-    <record id="server_action_reset_variant_attributes" model="ir.actions.server">
-        <field name="name">Reset Product Attribute Lines</field>
-        <field name="model_id" ref="product.model_product_template"/>
-        <field name="state">code</field>
-        <field name="code">
-# Reset attribute lines for selected product templates
-model.reset_template_attribute_lines(records.ids)
-        </field>
-    </record>
+    <data>
+        <!-- Server Action to reset attribute lines -->
+        <record id="server_action_reset_variant_attributes" model="ir.actions.server">
+            <field name="name">Reset Product Attribute Lines</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="state">code</field>
+            <field name="code">
+action = records.reset_template_attribute_lines()
+            </field>
+        </record>
+    </data>
 
-   
 </odoo>
