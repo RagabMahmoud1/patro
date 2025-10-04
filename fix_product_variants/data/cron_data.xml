@@ -4,9 +4,11 @@
         <record id="server_action_reset_variant_attributes" model="ir.actions.server">
             <field name="name">Reset Product Attribute Lines</field>
             <field name="model_id" ref="product.model_product_template"/>
+            <field name="binding_view_types">list</field>
             <field name="state">code</field>
             <field name="code">
-action = records.reset_template_attribute_lines()
+                if records:
+                    action = records.reset_template_attribute_lines()
             </field>
         </record>
     </data>
