@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Database Optimizer Form View -->
+    <record id="view_database_optimizer_form" model="ir.ui.view">
+        <field name="name">database.optimizer.form</field>
+        <field name="model">database.optimizer</field>
+        <field name="arch" type="xml">
+            <form string="Database Optimization">
+                <header>
+                    <button name="action_optimize" string="Run Optimization" 
+                            type="object" class="oe_highlight"
+                            attrs="{'invisible': [('state', 'in', ['running', 'done'])]}"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="optimization_type"/>
+                        </group>
+                    </group>
+                    <group string="Optimization Details">
+                        <p>
+                            <b>Indexes:</b> Creates database indexes on critical tables for faster queries<br/>
+                            <b>ANALYZE:</b> Updates statistics for query planner (Safe, recommended)<br/>
+                            <b>Clean Stored Computed:</b> Removes unnecessary computed field data<br/>
+                            <b>All:</b> Runs Indexes + ANALYZE (Safe for UI)<br/>
+                            <br/>
+                            <b>Note:</b> For VACUUM and REINDEX, use the shell script:<br/>
+                            <code>./patro/performance_optimization/scripts/optimize_database.sh</code>
+                        </p>
+                    </group>
+                    <notebook>
+                        <page string="Optimization Log">
+                            <field name="log" widget="text" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Database Optimizer Tree View -->
+    <record id="view_database_optimizer_tree" model="ir.ui.view">
+        <field name="name">database.optimizer.tree</field>
+        <field name="model">database.optimizer</field>
+        <field name="arch" type="xml">
+            <tree string="Database Optimizations">
+                <field name="name"/>
+                <field name="optimization_type"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Database Optimizer Action -->
+    <record id="action_database_optimizer" model="ir.actions.act_window">
+        <field name="name">Database Optimization</field>
+        <field name="res_model">database.optimizer</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Run database optimizations
+            </p>
+            <p>
+                Database optimization improves performance by:<br/>
+                - Creating indexes on frequently queried fields<br/>
+                - Reclaiming storage space<br/>
+                - Updating query planner statistics<br/>
+                - Rebuilding fragmented indexes
+            </p>
+        </field>
+    </record>
+
+    <!-- POS Config Form View Inherit
+    <record id="view_pos_config_form_inherit_performance" model="ir.ui.view">
+        <field name="name">pos.config.form.inherit.performance</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Performance Settings" name="performance_settings">
+                    <group string="Product Loading Optimization">
+                        <group>
+                            <field name="limit_products_load"/>
+                            <field name="product_load_limit" 
+                                   attrs="{'invisible': [('limit_products_load', '=', False)],
+                                          'required': [('limit_products_load', '=', True)]}"/>
+                            <field name="load_only_available_products"
+                                   attrs="{'invisible': [('limit_products_load', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="preload_favorites_only"
+                                   attrs="{'invisible': [('limit_products_load', '=', False)]}"/>
+                            <field name="use_product_categories" widget="many2many_tags"
+                                   attrs="{'invisible': [('limit_products_load', '=', False)]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <div class="alert alert-info" role="alert">
+                            <strong>Performance Tips for Large Catalogs (28,000+ products):</strong>
+                            <ul>
+                                <li>Enable "Limit Products to Load" to load only essential products initially</li>
+                                <li>Set "Product Load Limit" to 500-1000 for best balance</li>
+                                <li>Enable "Load Only Available Products" to skip out-of-stock items</li>
+                                <li>Use product categories to limit the initial product set</li>
+                                <li>Other products will be searchable on-demand</li>
+                            </ul>
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record> -->
+
+    <!-- Menu Items -->
+    <menuitem id="menu_database_optimizer_root"
+              name="Performance"
+              parent="base.menu_administration"
+              sequence="100"/>
+    
+    <menuitem id="menu_database_optimizer"
+              name="Database Optimization"
+              parent="menu_database_optimizer_root"
+              action="action_database_optimizer"
+              sequence="10"/>
+</odoo>
+

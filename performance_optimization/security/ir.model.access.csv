@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_database_optimizer_manager,database.optimizer.manager,model_database_optimizer,base.group_system,1,1,1,1
+access_database_optimizer_user,database.optimizer.user,model_database_optimizer,base.group_user,1,0,0,0
+

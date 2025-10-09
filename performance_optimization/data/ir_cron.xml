@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Daily Database Optimization (ANALYZE only) -->
+        <record id="ir_cron_database_daily_optimization" model="ir.cron">
+            <field name="name">Database: Daily Optimization (ANALYZE)</field>
+            <field name="model_id" ref="model_database_optimizer"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_daily_optimization()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="doall" eval="False"/>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).replace(hour=2, minute=0, second=0)"/>
+        </record>
+
+        <!-- Weekly Database Optimization (Full) -->
+        <record id="ir_cron_database_weekly_optimization" model="ir.cron">
+            <field name="name">Database: Weekly Optimization (Full)</field>
+            <field name="model_id" ref="model_database_optimizer"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_weekly_optimization()</field>
+            <field name="interval_number">7</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="doall" eval="False"/>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(days=7)).replace(hour=3, minute=0, second=0)"/>
+        </record>
+    </data>
+</odoo>
+

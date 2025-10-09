@@ -111,6 +111,7 @@ class Product(models.Model):
                                    readonly=False)
     color = fields.Char(string='Color',compute='_calc_color',store=True)
     size = fields.Char(string='Size',compute='_calc_color',store=True)
+    model_year = fields.Char(string='Model Year', related='product_tmpl_id.model_year', store=True)
 
     def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
 
@@ -132,6 +133,8 @@ class Product(models.Model):
     @api.depends('product_template_variant_value_ids','product_template_variant_value_ids.attribute_id.is_color','product_template_variant_value_ids.attribute_id.is_size')
     def _calc_color(self):
         for rec in self:
+            rec.color = False
+            rec.size = False
             for value in rec.product_template_variant_value_ids:
                 if value.product_attribute_value_id.attribute_id.is_color:
                    rec.color= value.product_attribute_value_id.name

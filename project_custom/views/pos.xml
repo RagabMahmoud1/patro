@@ -92,6 +92,26 @@
             <field name="arch" type="xml">
                 <xpath expr="//search" position="inside">
                     <field name="barcode2"/>
+                    <field name="ore_id"/>
+                    <field name="session_id"/>
+                    <field name="categ_id"/>
+                    <field name="color"/>
+                    <field name="size"/>
+                    <field name="model_year"/>
+                    
+                    <!-- Filters -->
+                    <filter string="Material Type" name="ore_filter" domain="[('ore_id', '!=', False)]"/>
+                    <filter string="Season" name="session_filter" domain="[('session_id', '!=', False)]"/>
+                    <filter string="Has Color" name="color_filter" domain="[('color', '!=', False)]"/>
+                    <filter string="Has Size" name="size_filter" domain="[('size', '!=', False)]"/>
+                    
+                    <!-- Group By -->
+                    <filter string="Material Type" name="group_ore" context="{'group_by':'ore_id'}"/>
+                    <filter string="Season" name="group_session" context="{'group_by':'session_id'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by':'categ_id'}"/>
+                    <filter string="Color" name="group_color" context="{'group_by':'color'}"/>
+                    <filter string="Size" name="group_size" context="{'group_by':'size'}"/>
+                    <filter string="Model Year" name="group_model_year" context="{'group_by':'model_year'}"/>
                 </xpath>
 
 
