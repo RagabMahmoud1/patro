@@ -34,7 +34,7 @@ Installation:
     'author': "Odoo Performance Team",
     'website': "https://www.odoo.com",
     'category': 'Technical',
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.0.1',
     'depends': [
         'base',
         'product',
