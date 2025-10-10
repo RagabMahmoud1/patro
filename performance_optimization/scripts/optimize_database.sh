@@ -128,13 +128,13 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 -- Show index usage
 SELECT 
     schemaname,
-    tablename,
-    indexname,
+    relname as table_name,
+    indexrelname as index_name,
     idx_scan as index_scans,
     pg_size_pretty(pg_relation_size(indexrelid)) as index_size
 FROM pg_stat_user_indexes
 WHERE schemaname = 'public'
-  AND tablename IN ('product_product', 'stock_quant', 'stock_move_line')
+  AND relname IN ('product_product', 'stock_quant', 'stock_move_line')
 ORDER BY idx_scan DESC
 LIMIT 20;
 EOF
