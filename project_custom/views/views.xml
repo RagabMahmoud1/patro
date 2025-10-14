@@ -12,6 +12,7 @@
           <field name="ore_id"/>
           <field name="session_id"/>
           <field name="model_year"/>
+          <field name="vendors" widget="many2many_tags"/>
           <field name="manual_barcode"/>
         </xpath>
         <xpath expr="//field[@name='taxes_id']" position="before">
@@ -36,6 +37,7 @@
           <field name="ore_id"/>
           <field name="session_id"/>
           <field name="model_year"/>
+          <field name="vendors" widget="many2many_tags"/>
           <field name="manual_barcode"/>
         </xpath>
          <xpath expr="//field[@name='taxes_id']" position="before">
