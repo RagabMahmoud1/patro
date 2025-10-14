@@ -1,63 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     
-    <!-- Optimize Stock Quant Tree View with Pagination -->
-    <record id="view_stock_quant_tree_optimize" model="ir.ui.view">
-        <field name="name">stock.quant.tree.optimize</field>
-        <field name="model">stock.quant</field>
-        <field name="inherit_id" ref="stock.view_stock_quant_tree"/>
-        <field name="arch" type="xml">
-            <xpath expr="//tree" position="attributes">
-                <attribute name="limit">100</attribute>
-                <attribute name="default_order">product_id</attribute>
-            </xpath>
-        </field>
-    </record>
-
-    <!-- Add filter to exclude zero stock by default -->
-    <record id="view_stock_quant_search_optimize" model="ir.ui.view">
-        <field name="name">stock.quant.search.optimize</field>
-        <field name="model">stock.quant</field>
-        <field name="inherit_id" ref="stock.stock_quant_view_search"/>
-        <field name="arch" type="xml">
-            <xpath expr="//search" position="inside">
-                <filter name="has_stock" string="Has Stock" domain="[('quantity', '>', 0)]"/>
-                <filter name="negative_stock" string="Negative Stock" domain="[('quantity', '&lt;', 0)]"/>
-                <separator/>
-                <group expand="0" string="Group By">
-                    <filter name="group_by_product" string="Product" context="{'group_by': 'product_id'}"/>
-                    <filter name="group_by_location" string="Location" context="{'group_by': 'location_id'}"/>
-                </group>
-            </xpath>
-        </field>
-    </record>
-
-    <!-- Optimize Report Stock Quantity Tree View -->
-    <record id="view_report_stock_quantity_tree_optimize" model="ir.ui.view">
-        <field name="name">report.stock.quantity.tree.optimize</field>
-        <field name="model">report.stock.quantity</field>
-        <field name="inherit_id" ref="stock.view_stock_product_tree"/>
-        <field name="arch" type="xml">
-            <xpath expr="//tree" position="attributes">
-                <attribute name="limit">100</attribute>
-                <attribute name="default_order">product_id</attribute>
-            </xpath>
-        </field>
-    </record>
-
-    <!-- Add optimized search filters for Report Stock Quantity -->
-    <record id="view_report_stock_quantity_search_optimize" model="ir.ui.view">
-        <field name="name">report.stock.quantity.search.optimize</field>
-        <field name="model">report.stock.quantity</field>
-        <field name="inherit_id" ref="stock.search_product_quantity"/>
-        <field name="arch" type="xml">
-            <xpath expr="//search" position="inside">
-                <filter name="has_qty" string="Has Quantity" domain="[('quantity', '!=', 0)]"/>
-                <filter name="positive_qty" string="Positive Quantity" domain="[('quantity', '&gt;', 0)]"/>
-                <separator/>
-            </xpath>
-        </field>
-    </record>
+    <!-- Stock Report Optimization Views -->
+    <!-- Note: This module works primarily through Python model optimizations -->
+    <!-- Views are kept minimal to avoid dependency issues -->
 
 </odoo>
-
