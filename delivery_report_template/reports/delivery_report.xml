@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Define the delivery report with product template view (without variants) -->
+    <record id="action_report_delivery_template" model="ir.actions.report">
+        <field name="name">Delivery Slip - Products Only</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">delivery_report_template.report_deliveryslip_template</field>
+        <field name="report_file">delivery_report_template.report_deliveryslip_template</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Delivery - %s' % (object.name)</field>
+    </record>
+
+</odoo>
+

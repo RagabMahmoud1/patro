@@ -16,61 +16,61 @@ class StockQuantOptimized(models.Model):
         comodel_name="product.ore",
         string="نوع الخامة",
         related='product_id.ore_id',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to True
     )
     
     session_id = fields.Many2one(
         comodel_name="product.session",
         string="الموسم",
         related='product_id.session_id',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to True
     )
     
     categ_id = fields.Many2one(
         comodel_name="product.category",
         string="Category",
         related='product_id.categ_id',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to True
     )
     
     color = fields.Char(
         string='Color',
         related='product_id.color',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to True
     )
     
     size = fields.Char(
         string='Size',
         related='product_id.size',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to True
     )
     
     model_year = fields.Char(
         string='Model Year',
         related='product_id.model_year',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to True
     )
     
     list_price = fields.Float(
         related='product_id.list_price',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to True
     )
     
     standard_price = fields.Float(
         related='product_id.standard_price',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to True
     )
     
     virtual_available = fields.Float(
         related='product_id.virtual_available',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to True
     )
     
     product_tmpl_id2 = fields.Many2one(
         'product.template',
         string='Product Template',
         related='product_id.product_tmpl_id',
-        store=False  # Changed from True to False
+        store=True  # Changed from True to False
     )
 
 

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <template id="report_delivery_document_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-set="o" t-value="o.with_context(lang=o._get_report_lang())" />
+                <t t-set="partner" t-value="o.partner_id or (o.move_lines and o.move_lines[0].partner_id) or False"/>
+
+                <t t-set="address">
+                    <div name="div_outgoing_address">
+                        <div t-if="o.should_print_delivery_address()">
+                            <span><strong>Delivery Address:</strong></span>
+                            <div t-field="o.move_lines[0].partner_id"
+                                t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        </div>
+                        <div t-elif="o.picking_type_id.code != 'internal' and o.picking_type_id.warehouse_id.partner_id">
+                            <span><strong>Warehouse Address:</strong></span>
+                            <div t-field="o.picking_type_id.warehouse_id.partner_id"
+                                t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        </div>
+                    </div>
+                </t>
+                
+                <t t-set="information_block">
+                    <div class="row">
+                        <div class="col-7" name="div_incoming_address">
+                            <t t-set="show_partner" t-value="False" />
+                            <div t-if="o.picking_type_id.code=='incoming' and partner">
+                                <span><strong>Vendor Address:</strong></span>
+                                <t t-set="show_partner" t-value="True" />
+                            </div>
+                            <div t-if="o.picking_type_id.code=='outgoing' and partner and partner != partner.commercial_partner_id">
+                                <span><strong>Customer Address:</strong></span>
+                                <t t-set="show_partner" t-value="True" />
+                            </div>
+                            <div t-if="show_partner" name="partner_header">
+                                <div t-field="partner.commercial_partner_id"
+                                    t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                <p t-if="partner.sudo().commercial_partner_id.vat"><t t-esc="o.company_id.country_id.vat_label or 'Tax ID'"/>: <span t-field="partner.sudo().commercial_partner_id.vat"/></p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                
+                <div class="page">
+                    <h2>
+                        <span t-field="o.name"/>
+                    </h2>
+                    <div class="row mt32 mb32">
+                        <div t-if="o.origin" class="col-auto" name="div_origin">
+                            <strong>Order:</strong>
+                            <p t-field="o.origin"/>
+                        </div>
+                        <div t-if="o.state" class="col-auto" name="div_sched_date">
+                            <strong>Shipping Date:</strong>
+                            <t t-if="o.state == 'done'">
+                                <p t-field="o.date_done"/>
+                            </t>
+                            <t t-if="o.state != 'done'">
+                                <p t-field="o.scheduled_date"/>
+                            </t>
+                        </div>
+                    </div>
+                    
+                    <!-- Table for NOT DONE state - Grouped by Product Template -->
+                    <table class="table table-sm" t-if="o.state!='done'" name="stock_move_table">
+                        <thead>
+                            <tr>
+                                <th name="th_sm_product"><strong>Product</strong></th>
+                                <th name="th_sm_ordered"><strong>Ordered</strong></th>
+                                <th name="th_sm_quantity"><strong>Delivered</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="grouped_lines" t-value="o.get_grouped_move_lines_by_template()"/>
+                            <tr t-foreach="grouped_lines" t-as="group">
+                                <td>
+                                    <span t-esc="group['product_tmpl_name']"/>
+                                </td>
+                                <td>
+                                    <span t-esc="'%.2f' % group['quantity']"/>
+                                    <span t-esc="group['uom'].name"/>
+                                </td>
+                                <td>
+                                    <span t-esc="'%.2f' % group['quantity']"/>
+                                    <span t-esc="group['uom'].name"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Table for DONE state - Grouped by Product Template -->
+                    <table class="table table-sm mt48" t-if="o.move_line_ids and o.state=='done'" name="stock_move_line_table">
+                        <thead>
+                            <tr>
+                                <th name="th_sml_product"><strong>Product</strong></th>
+                                <th name="th_sml_qty_ordered" class="text-center">
+                                    <strong>Ordered</strong>
+                                </th>
+                                <th name="th_sml_quantity" class="text-center"><strong>Delivered</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="grouped_lines" t-value="o.get_grouped_move_lines_by_template()"/>
+                            <tr t-foreach="grouped_lines" t-as="group">
+                                <td>
+                                    <span t-esc="group['product_tmpl_name']"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="'%.2f' % group['quantity']"/>
+                                    <span t-esc="group['uom'].name"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="'%.2f' % group['quantity']"/>
+                                    <span t-esc="group['uom'].name"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Backorders -->
+                    <t t-set="backorders" t-value="o.backorder_ids.filtered(lambda x: x.state not in ('done', 'cancel'))"/>
+                    <t t-if="o.backorder_ids and backorders">
+                        <p class="mt-5">
+                            <span>Remaining quantities not yet delivered:</span>
+                        </p>
+                        <table class="table table-sm" name="stock_backorder_table" style="table-layout: fixed;">
+                            <thead>
+                                <tr>
+                                    <th name="th_sb_product"><strong>Product</strong></th>
+                                    <th/>
+                                    <th name="th_sb_quantity" class="text-center"><strong>Quantity</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="backorders" t-as="backorder">
+                                    <t t-set="bo_grouped" t-value="backorder.get_grouped_move_lines_by_template()"/>
+                                    <tr t-foreach="bo_grouped" t-as="bo_group">
+                                        <td class="w-auto">
+                                            <span t-esc="bo_group['product_tmpl_name']"/>
+                                        </td>
+                                        <td/>
+                                        <td class="text-center w-auto">
+                                            <span t-esc="'%.2f' % bo_group['quantity']"/>
+                                            <span t-esc="bo_group['uom'].name"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <!-- Signature -->
+                    <div t-if="o.signature" class="mt32 ml64 mr4" name="signature">
+                        <div class="offset-8">
+                            <strong>Signature</strong>
+                        </div>
+                        <div class="offset-8">
+                            <img t-att-src="image_data_uri(o.signature)" style="max-height: 4cm; max-width: 8cm;"/>
+                        </div>
+                        <div class="offset-8 text-center">
+                            <p t-field="o.partner_id.name"/>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Main report wrapper -->
+    <template id="report_deliveryslip_template">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="delivery_report_template.report_delivery_document_template" t-lang="o._get_report_lang()"/>
+        </t>
+    </template>
+
+</odoo>
