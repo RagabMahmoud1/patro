@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend POS Order Report Pivot View -->
+    <record id="view_pos_order_report_pivot_inherit" model="ir.ui.view">
+        <field name="name">pos.order.report.pivot.inherit</field>
+        <field name="model">report.pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_report_pos_order_pivot"/>
+        <field name="arch" type="xml">
+            <xpath expr="//pivot" position="inside">
+                <field name="cost_total" type="measure"/>
+                <field name="cost_avg" type="measure"/>
+                <field name="qty_available" type="measure"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend POS Order Report Graph View -->
+    <record id="view_pos_order_report_graph_inherit" model="ir.ui.view">
+        <field name="name">pos.order.report.graph.inherit</field>
+        <field name="model">report.pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_report_pos_order_graph"/>
+        <field name="arch" type="xml">
+            <xpath expr="//graph" position="inside">
+                <field name="cost_total" type="measure"/>
+                <field name="cost_avg" type="measure"/>
+                <field name="qty_available" type="measure"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend POS Order Report Tree View -->
+    <record id="view_pos_order_report_tree_inherit" model="ir.ui.view">
+        <field name="name">pos.order.report.tree.inherit</field>
+        <field name="model">report.pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.report_pos_order_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="cost_total" optional="show"/>
+                <field name="cost_avg" optional="show"/>
+                <field name="qty_available" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend POS Order Report Search View -->
+    <record id="view_pos_order_report_search_inherit" model="ir.ui.view">
+        <field name="name">pos.order.report.search.inherit</field>
+        <field name="model">report.pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_report_pos_order_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='product']" position="after">
+                <filter name="filter_has_stock" string="Has Stock" domain="[('qty_available', '>', 0)]"/>
+                <filter name="filter_no_stock" string="No Stock" domain="[('qty_available', '=', 0)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
+
