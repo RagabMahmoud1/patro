@@ -13,6 +13,7 @@
           <field name="session_id"/>
           <field name="model_year"/>
           <field name="vendors" widget="many2many_tags"/>
+          <field name="model"/>
           <field name="manual_barcode"/>
         </xpath>
         <xpath expr="//field[@name='taxes_id']" position="before">
@@ -37,6 +38,7 @@
           <field name="ore_id"/>
           <field name="session_id"/>
           <field name="model_year"/>
+          <field name="model"/>
           <field name="vendors" widget="many2many_tags"/>
           <field name="manual_barcode"/>
         </xpath>
@@ -62,6 +64,7 @@
           <field name="ore_id"/>
           <field name="session_id"/>
           <field name="model_year"/>
+          <field name="model"/>
         </xpath>
         <xpath expr="//field[@name='lst_price']" position="attributes">
           <attribute name="sum">Total</attribute>
@@ -85,6 +88,7 @@
           <field name="ore_id"/>
           <field name="session_id"/>
           <field name="model_year"/>
+          <field name="model"/>
         </xpath>
           <xpath expr="//field[@name='list_price']" position="attributes">
           <attribute name="sum">Total</attribute>
@@ -187,6 +191,7 @@
 
             <xpath expr="//field[@name='product_id']" position="replace">
               <field name="product_id" string="Product" filter_domain="['|',('product_id.seller_ids', 'ilike', self),'|',('product_id.name', 'ilike', self),('product_id.product_template_attribute_value_ids', 'ilike', self)]"/>
+              
             </xpath>
 
         </field>
@@ -200,6 +205,7 @@
 
             <xpath expr="//search" position="inside">
               <field name="seller_ids" string="Vendors" filter_domain="[('seller_ids', 'ilike', self)]"/>
+              <field name="model" string="Model" filter_domain="[('model', 'ilike', self)]"/>
             </xpath>
 
         </field>
@@ -212,6 +218,7 @@
 
             <xpath expr="//search" position="inside">
               <field name="seller_ids" string="Vendors" filter_domain="[('seller_ids', 'ilike', self)]"/>
+              <field name="model" string="Model" filter_domain="[('model', 'ilike', self)]"/>
             </xpath>
 
         </field>

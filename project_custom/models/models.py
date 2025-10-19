@@ -31,6 +31,7 @@ class ProductTemplate(models.Model):
     cost_percentage = fields.Float(string="Cost Percentage",compute='_calc_cost_percentage',store=True,readonly=False)
     model_year = fields.Char(string='Model Year', required=False)
     vendors = fields.Many2many(comodel_name='res.partner',compute='_calc_vendors',store=True)
+    model = fields.Char(string='Model', required=False)
     commission = fields.Float(
         string='commission',
         required=False)
@@ -39,7 +40,7 @@ class ProductTemplate(models.Model):
 
         if args is None:
             args = []
-        search_domain = ['|', ('barcode', operator, name), '|', ('default_code', operator, name),
+        search_domain = ['|', ('barcode', operator, name), '|', ('default_code', operator, name), '|', ('model', operator, name),
                          ('name', operator, name)]
         return list(self._search(search_domain + args, limit=limit))
 
@@ -112,13 +113,14 @@ class Product(models.Model):
     color = fields.Char(string='Color',compute='_calc_color',store=True)
     size = fields.Char(string='Size',compute='_calc_color',store=True)
     model_year = fields.Char(string='Model Year', related='product_tmpl_id.model_year', store=True)
+    model = fields.Char(string='Model', related='product_tmpl_id.model', store=True)
 
     def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
 
         if args is None:
             args = []
         search_domain = ['|', ('barcode', operator, name), '|', ('default_code', operator, name),
-                         ('name', operator, name)]
+                         ('name', operator, name), '|', ('model', operator, name)]
         return list(self._search(search_domain + args, limit=limit))
 
     #def name_get(self):
