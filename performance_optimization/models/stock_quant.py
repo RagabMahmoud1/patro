@@ -6,6 +6,10 @@ from odoo import api, models, tools, fields
 class StockQuant(models.Model):
     _inherit = 'stock.quant'
 
+    # Show product template fields on quants
+    model = fields.Char(string='Model', related='product_id.product_tmpl_id.model', store=True)
+    vendors_names = fields.Char(string='Vendors', compute='_compute_vendors_names', store=False)
+
     @api.model
     def _auto_init(self):
         """Add database indexes for faster stock queries"""
@@ -66,4 +70,10 @@ class StockQuant(models.Model):
             product_id, location_id, lot_id=lot_id, 
             package_id=package_id, owner_id=owner_id, strict=strict
         )
+
+    def _compute_vendors_names(self):
+        for rec in self:
+            tmpl = rec.product_id.product_tmpl_id
+            names = ', '.join(tmpl.vendors.mapped('name')) if hasattr(tmpl, 'vendors') and tmpl.vendors else ''
+            rec.vendors_names = names
 

@@ -11,6 +11,8 @@
                 <field name="cost_total" type="measure"/>
                 <field name="cost_avg" type="measure"/>
                 <field name="qty_available" type="measure"/>
+                <field name="model" type="row"/>
+                <field name="vendors_names" type="row"/>
             </xpath>
         </field>
     </record>
@@ -25,6 +27,8 @@
                 <field name="cost_total" type="measure"/>
                 <field name="cost_avg" type="measure"/>
                 <field name="qty_available" type="measure"/>
+                <field name="model"/>
+                <field name="vendors_names"/>
             </xpath>
         </field>
     </record>
@@ -39,6 +43,8 @@
                 <field name="cost_total" optional="show"/>
                 <field name="cost_avg" optional="show"/>
                 <field name="qty_available" optional="show"/>
+                <field name="model" optional="show"/>
+                <field name="vendors_names" optional="show"/>
             </xpath>
         </field>
     </record>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend Stock Quant Editable Tree to include Model and Vendors -->
+    <record id="view_stock_quant_tree_editable_inherit_pos_report_ext" model="ir.ui.view">
+        <field name="name">stock.quant.tree.editable.inherit.pos.report.ext</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='product_id']" position="after">
+                <field name="product_model" readonly="1"/>
+                <field name="product_vendors" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+
+

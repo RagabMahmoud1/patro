@@ -16,6 +16,7 @@ Adds additional fields to POS Order Report:
     'depends': ['point_of_sale', 'stock'],
     'data': [
         'views/pos_order_report_views.xml',
+        'views/stock_quant_views.xml',
     ],
     'installable': True,
     'application': False,
