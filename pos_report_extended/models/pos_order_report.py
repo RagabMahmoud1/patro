@@ -20,7 +20,7 @@ class PosOrderReport(models.Model):
     # Additional measures
     cost_total = fields.Float(string='Cost Total', readonly=True)
     cost_avg = fields.Float(string='Cost Avg', readonly=True, group_operator="avg")
-    qty_available = fields.Float(string='On Hand', readonly=True, group_operator="avg")
+    qty_available = fields.Float(string='On Hand', readonly=True, group_operator="sum")
     model = fields.Char(string='Model', readonly=True)
     vendors_names = fields.Char(string='Vendors', readonly=True)
 
@@ -28,7 +28,7 @@ class PosOrderReport(models.Model):
         select_str = super(PosOrderReport, self)._select()
         # Add cost (from l.total_cost) and on hand to SELECT
         select_str += """,
-                SUM(COALESCE(l.total_cost, 0) / CASE COALESCE(s.currency_rate, 0) WHEN 0 THEN 1.0 ELSE s.currency_rate END) AS cost_total,
+                SUM(ROUND((COALESCE(l.total_cost, 0) / CASE COALESCE(s.currency_rate, 0) WHEN 0 THEN 1.0 ELSE s.currency_rate END), cu.decimal_places)) AS cost_total,
                 CASE
                     WHEN SUM(l.qty * u.factor) = 0 THEN NULL
                     ELSE (SUM(COALESCE(l.total_cost, 0) / CASE COALESCE(s.currency_rate, 0) WHEN 0 THEN 1.0 ELSE s.currency_rate END) / SUM(l.qty * u.factor))::decimal

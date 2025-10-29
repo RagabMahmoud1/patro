@@ -74,6 +74,8 @@
                         </thead>
                         <tbody>
                             <t t-set="grouped_lines" t-value="o.get_grouped_move_lines_by_template()"/>
+                            <t t-set="total_ordered" t-value="0.0"/>
+                            <t t-set="total_delivered" t-value="0.0"/>
                             <tr t-foreach="grouped_lines" t-as="group">
                                 <td>
                                     <span t-esc="group['product_tmpl_name']"/>
@@ -86,6 +88,13 @@
                                     <span t-esc="'%.2f' % group['quantity']"/>
                                     <span t-esc="group['uom'].name"/>
                                 </td>
+                                <t t-set="total_ordered" t-value="total_ordered + group['quantity']"/>
+                                <t t-set="total_delivered" t-value="total_delivered + group['quantity']"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td><strong><span t-esc="'%.2f' % total_ordered"/></strong></td>
+                                <td><strong><span t-esc="'%.2f' % total_delivered"/></strong></td>
                             </tr>
                         </tbody>
                     </table>
@@ -103,6 +112,8 @@
                         </thead>
                         <tbody>
                             <t t-set="grouped_lines" t-value="o.get_grouped_move_lines_by_template()"/>
+                            <t t-set="total_ordered_done" t-value="0.0"/>
+                            <t t-set="total_delivered_done" t-value="0.0"/>
                             <tr t-foreach="grouped_lines" t-as="group">
                                 <td>
                                     <span t-esc="group['product_tmpl_name']"/>
@@ -115,6 +126,13 @@
                                     <span t-esc="'%.2f' % group['quantity']"/>
                                     <span t-esc="group['uom'].name"/>
                                 </td>
+                                <t t-set="total_ordered_done" t-value="total_ordered_done + group['quantity']"/>
+                                <t t-set="total_delivered_done" t-value="total_delivered_done + group['quantity']"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td class="text-center"><strong><span t-esc="'%.2f' % total_ordered_done"/></strong></td>
+                                <td class="text-center"><strong><span t-esc="'%.2f' % total_delivered_done"/></strong></td>
                             </tr>
                         </tbody>
                     </table>
@@ -134,6 +152,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <t t-set="backorder_total" t-value="0.0"/>
                                 <t t-foreach="backorders" t-as="backorder">
                                     <t t-set="bo_grouped" t-value="backorder.get_grouped_move_lines_by_template()"/>
                                     <tr t-foreach="bo_grouped" t-as="bo_group">
@@ -145,8 +164,14 @@
                                             <span t-esc="'%.2f' % bo_group['quantity']"/>
                                             <span t-esc="bo_group['uom'].name"/>
                                         </td>
+                                        <t t-set="backorder_total" t-value="backorder_total + bo_group['quantity']"/>
                                     </tr>
                                 </t>
+                                <tr>
+                                    <td class="w-auto"><strong>Total</strong></td>
+                                    <td/>
+                                    <td class="text-center w-auto"><strong><span t-esc="'%.2f' % backorder_total"/></strong></td>
+                                </tr>
                             </tbody>
                         </table>
                     </t>
