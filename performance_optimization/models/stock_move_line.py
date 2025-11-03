@@ -6,13 +6,7 @@ from odoo import api, models, tools, fields
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    # Remove store=True from computed fields to avoid unnecessary database writes
-    # These can be computed on-the-fly when needed
-    qty_available = fields.Float(
-        string="Quantity On Hand",
-        compute='_calc_qty_available',
-        store=False  # Changed from True to False for better performance
-    )
+
 
     @api.model
     def _auto_init(self):
@@ -64,67 +58,3 @@ class StockMoveLine(models.Model):
         )
         
         return res
-
-    @api.depends('product_id.qty_available', 'picking_id.location_id')
-    def _calc_qty_available(self):
-        """Optimized qty_available calculation with batching"""
-        # Group by location and product to reduce queries
-        location_product_map = {}
-        for line in self:
-            if line.picking_id and line.picking_id.location_id:
-                key = (line.picking_id.location_id.id, line.product_id.id)
-                if key not in location_product_map:
-                    location_product_map[key] = []
-                location_product_map[key].append(line)
-        
-        # Batch query for all location-product combinations
-        for (location_id, product_id), lines in location_product_map.items():
-            quants = self.env['stock.quant'].read_group(
-                [('location_id', '=', location_id), ('product_id', '=', product_id)],
-                ['quantity:sum'],
-                []
-            )
-            qty = quants[0]['quantity'] if quants and quants[0].get('quantity') else 0
-            qty_available = max(0, qty)
-            
-            for line in lines:
-                line.qty_available = qty_available
-        
-        # Handle lines without picking_id
-        for line in self:
-            if line.id not in sum(location_product_map.values(), []):
-                line.qty_available = 0
-
-    @api.constrains('qty_done', 'picking_id.location_id')
-    def check_qty_done_hand(self):
-        """Optimized constraint check with reduced queries"""
-        # Batch all checks to reduce database queries
-        lines_to_check = self.filtered(
-            lambda l: l.picking_id and l.picking_id.picking_type_code in ('outgoing', 'internal')
-        )
-        
-        if not lines_to_check:
-            return
-        
-        # Group by location and product
-        location_product_lines = {}
-        for line in lines_to_check:
-            key = (line.picking_id.location_id.id, line.product_id.id)
-            if key not in location_product_lines:
-                location_product_lines[key] = []
-            location_product_lines[key].append(line)
-        
-        # Batch query for all combinations
-        for (location_id, product_id), lines in location_product_lines.items():
-            quants = self.env['stock.quant'].read_group(
-                [('location_id', '=', location_id), ('product_id', '=', product_id)],
-                ['quantity:sum'],
-                []
-            )
-            qty_available = quants[0]['quantity'] if quants and quants[0].get('quantity') else 0
-            
-            for line in lines:
-                if line.qty_done > qty_available:
-                    from odoo.exceptions import ValidationError
-                    raise ValidationError("Order Qty Greater Than Quantity On Hand")
-

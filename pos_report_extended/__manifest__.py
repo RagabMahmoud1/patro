@@ -3,7 +3,7 @@
     'name': 'POS Report Extended',
     'version': '15.0.1.0.0',
     'category': 'Point of Sale',
-    'summary': 'Add Cost and On Hand to POS Report',
+    'summary': 'Add Cost and On Hand to POS Reports',
     'description': """
 POS Report Extended
 ===================
