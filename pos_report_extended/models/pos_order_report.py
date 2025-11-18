@@ -18,9 +18,10 @@ class PosOrderReport(models.Model):
     _inherit = "report.pos.order"
 
     # Additional measures
-    cost_total = fields.Float(string='Cost Total', readonly=True)
+    cost_total = fields.Float(string='Cost Total', readonly=True, group_operator="max")
     cost_avg = fields.Float(string='Cost Avg', readonly=True, group_operator="avg")
-    qty_available = fields.Float(string='On Hand', readonly=True, group_operator="sum")
+    # Use max to avoid summing stock across lines/groups in pivot
+    qty_available = fields.Float(string='On Hand', readonly=True, group_operator="max")
     model = fields.Char(string='Model', readonly=True)
     vendors_names = fields.Char(string='Vendors', readonly=True)
 
@@ -49,12 +50,12 @@ class PosOrderReport(models.Model):
         # Join aggregated stock quantities per product to avoid correlated subquery and grouping errors
         from_str += """
                 LEFT JOIN (
-                    SELECT sq.product_id, SUM(sq.quantity) AS qty_available
+                    SELECT sq.product_id, sq.company_id, SUM(sq.quantity) AS qty_available
                     FROM stock_quant sq
                     JOIN stock_location sl ON sl.id = sq.location_id
                     WHERE sl.usage = 'internal'
-                    GROUP BY sq.product_id
-                ) AS q ON q.product_id = p.id
+                    GROUP BY sq.product_id, sq.company_id
+                ) AS q ON q.product_id = p.id AND q.company_id = s.company_id
                 LEFT JOIN (
                     SELECT psi.product_tmpl_id, string_agg(DISTINCT rp.name, ', ') AS vendors_names
                     FROM product_supplierinfo psi

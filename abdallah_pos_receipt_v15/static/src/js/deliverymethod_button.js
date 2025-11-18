@@ -88,13 +88,14 @@ odoo.define('abdallah_pos_receipt_v15.pos_delivery_method',function(require) {
         }
 }
 SetDeliveryMethodButton.template = 'SetDeliveryMethodButton';
+Registries.Component.add(SetDeliveryMethodButton);
+// Register control button without position to avoid timing issues
+// It will be added to the end of the control buttons list
 ProductScreen.addControlButton({
         component: SetDeliveryMethodButton,
         condition: function () {
             return true;
         },
-        position: ['before', 'SetPricelistButton'],
     });
-    Registries.Component.add(SetDeliveryMethodButton);
     return SetDeliveryMethodButton;
 });

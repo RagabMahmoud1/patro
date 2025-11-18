@@ -43,7 +43,13 @@ class Price(models.Model):
     def _compute_price_rule_get_items(self, products_qty_partner, date, uom_id, prod_tmpl_ids, prod_ids, categ_ids,sessions,ores):
         self.ensure_one()
         # Load all rules
-        self.env['product.pricelist.item'].flush(['price', 'currency_id', 'company_id'])
+        self.env['product.pricelist.item'].flush(['price', 'currency_id', 'company_id', 'active'])
+        # Handle empty arrays for sessions and ores - use sentinel value to ensure NULL check works
+        # PostgreSQL's any([]) returns FALSE, which breaks NULL checks, so we use [-1] (non-existent ID)
+        if not sessions:
+            sessions = [-1]  # Use -1 (non-existent ID) to ensure NULL check works
+        if not ores:
+            ores = [-1]  # Use -1 (non-existent ID) to ensure NULL check works
         self.env.cr.execute(
             """
             SELECT
@@ -60,6 +66,7 @@ class Price(models.Model):
                 AND (item.pricelist_id = %s)
                 AND (item.date_start IS NULL OR item.date_start<=%s)
                 AND (item.date_end IS NULL OR item.date_end>=%s)
+                AND (item.active = TRUE)
             ORDER BY
                 item.applied_on, item.min_quantity desc, categ.complete_name desc, item.id desc
             """,
@@ -106,7 +113,6 @@ class Price(models.Model):
 
         sessions = [tmpl.session_id.id for tmpl in products if tmpl.session_id]
         ores = [tmpl.ore_id.id for tmpl in products if tmpl.ore_id]
-        print("sessions",sessions)
         is_product_template = products[0]._name == "product.template"
 
         if is_product_template:
@@ -145,31 +151,12 @@ class Price(models.Model):
 
             price_uom = self.env['uom.uom'].browse([qty_uom_id])
             for rule in items:
-                print("items",items)
-                if rule.min_quantity and qty_in_product_uom < rule.min_quantity:
+                # Use the standard _is_applicable_for method which handles min_quantity correctly
+                if not rule._is_applicable_for(product, qty_in_product_uom):
                     continue
-                if is_product_template:
-                    if rule.product_tmpl_id and product.id != rule.product_tmpl_id.id:
-                        continue
-                    if rule.product_id and not (product.product_variant_count == 1 and product.product_variant_id.id == rule.product_id.id):
-                        # product rule acceptable on template if has only one variant
-                        continue
-                else:
-                    if rule.product_tmpl_id and product.product_tmpl_id.id != rule.product_tmpl_id.id:
-                        continue
-                    if rule.product_id and product.id != rule.product_id.id:
-                        continue
-
-                if rule.categ_id:
-                    cat = product.categ_id
-                    while cat:
-                        if cat.id == rule.categ_id.id:
-                            break
-                        cat = cat.parent_id
-                    if not cat:
-                        continue
+                
+                # Additional checks for custom fields (session_id and ore_id)
                 if rule.session_id and product.session_id.id != rule.session_id.id:
-                    print(">>LL", rule.session_id)
                     continue
                 if rule.ore_id and product.ore_id.id != rule.ore_id.id:
                     continue
