@@ -40,8 +40,8 @@ class StockLine(models.Model):
                         ('product_id', '=', line.product_id.id)
                     ])
                     qty_available=sum(inventory_quant.mapped('quantity'))
-                    if line.qty_done>qty_available:
-                        raise ValidationError("Order Qty Greater Than  Qtuantity On Hand")
+                    # if line.qty_done>qty_available:
+                    #     raise ValidationError("Order Qty Greater Than  Qtuantity On Hand")
 #
 # class Stock(models.Model):
 #     _inherit='stock.move'

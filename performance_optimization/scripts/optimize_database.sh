@@ -31,20 +31,48 @@ export PGPASSWORD=$PGPASSWORD
 echo -e "${YELLOW}Step 1: Creating Database Indexes...${NC}"
 
 psql -U $DB_USER -d $DB_NAME <<EOF
+-- ============================================
 -- Product indexes
+-- ============================================
 CREATE INDEX CONCURRENTLY IF NOT EXISTS product_product_barcode_idx ON product_product(barcode);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS product_product_default_code_idx ON product_product(default_code);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS product_product_tmpl_active_idx ON product_product(product_tmpl_id, active);
+-- Custom field indexes (from project_custom)
+CREATE INDEX CONCURRENTLY IF NOT EXISTS product_product_color_idx ON product_product(color);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS product_product_size_idx ON product_product(size);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS product_product_ore_id_idx ON product_product(ore_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS product_product_session_id_idx ON product_product(session_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS product_product_tmpl_color_size_idx ON product_product(product_tmpl_id, color, size);
 
--- Stock quant indexes
+-- ============================================
+-- Product Template indexes
+-- ============================================
+CREATE INDEX CONCURRENTLY IF NOT EXISTS product_template_ore_id_idx ON product_template(ore_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS product_template_session_id_idx ON product_template(session_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS product_template_model_year_idx ON product_template(model_year);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS product_template_categ_ore_idx ON product_template(categ_id, ore_id);
+
+-- ============================================
+-- Stock quant indexes (CRITICAL for stock reports)
+-- ============================================
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_prod_loc_idx ON stock_quant(product_id, location_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_loc_prod_idx ON stock_quant(location_id, product_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_company_idx ON stock_quant(company_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_qty_prod_idx ON stock_quant(quantity, product_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_lot_idx ON stock_quant(lot_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_reserved_qty_idx ON stock_quant(reserved_quantity, location_id);
+-- Custom field indexes (from project_custom) - IMPORTANT for filtering
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_ore_id_idx ON stock_quant(ore_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_session_id_idx ON stock_quant(session_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_categ_id_idx ON stock_quant(categ_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_ore_session_idx ON stock_quant(ore_id, session_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_color_idx ON stock_quant(color);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_size_idx ON stock_quant(size);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_quant_prod_loc_qty_idx ON stock_quant(product_id, location_id, quantity);
 
+-- ============================================
 -- Stock move line indexes
+-- ============================================
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_prod_loc_idx ON stock_move_line(product_id, location_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_pick_prod_idx ON stock_move_line(picking_id, product_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_move_idx ON stock_move_line(move_id);
@@ -52,26 +80,38 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_loc_dest_idx ON stock_mo
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_state_idx ON stock_move_line(state);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_lot_idx ON stock_move_line(lot_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_date_prod_idx ON stock_move_line(date, product_id);
+-- Custom field indexes (from project_custom)
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_ore_id_idx ON stock_move_line(ore_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_session_id_idx ON stock_move_line(session_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_categ_id_idx ON stock_move_line(categ_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_date_ore_idx ON stock_move_line(date, ore_id);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_line_date_session_idx ON stock_move_line(date, session_id);
 
+-- ============================================
 -- Stock move indexes
+-- ============================================
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_prod_loc_idx ON stock_move(product_id, location_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_prod_dest_idx ON stock_move(product_id, location_dest_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_state_idx ON stock_move(state);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_date_idx ON stock_move(date);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_move_picking_idx ON stock_move(picking_id);
 
+-- ============================================
 -- POS indexes
+-- ============================================
 CREATE INDEX CONCURRENTLY IF NOT EXISTS pos_order_session_idx ON pos_order(session_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS pos_order_state_idx ON pos_order(state);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS pos_order_date_idx ON pos_order(date_order);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS pos_order_partner_idx ON pos_order(partner_id);
 
+-- ============================================
 -- Stock picking indexes
+-- ============================================
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_picking_state_idx ON stock_picking(state);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_picking_type_idx ON stock_picking(picking_type_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS stock_picking_scheduled_date_idx ON stock_picking(scheduled_date);
 
-\echo 'Indexes created successfully!'
+\echo 'All indexes created successfully!'
 EOF
 
 echo -e "${GREEN}✓ Indexes created${NC}"

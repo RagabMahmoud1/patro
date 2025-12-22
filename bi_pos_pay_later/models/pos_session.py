@@ -61,6 +61,18 @@ class PosSessionInherit(models.Model):
 							)
 		return True
 
+	def _check_invoices_are_posted(self):
+		"""Override to exclude cancelled invoices from the check"""
+		# Filter out cancelled invoices - they should not prevent session closure
+		unposted_invoices = self.order_ids.sudo().with_company(self.company_id).account_move.filtered(
+			lambda x: x.state != 'posted' and x.state != 'cancel'
+		)
+		if unposted_invoices:
+			raise UserError(_('You cannot close the POS when invoices are not posted.\n'
+							  'Invoices: %s') % str.join('\n',
+														 ['%s - %s' % (invoice.name, invoice.state) for invoice in
+														  unposted_invoices]))
+
 	def _cannot_close_session(self, bank_payment_method_diffs=None):
 		"""
 		Add check in this method if you want to return or raise an error when trying to either post cash details

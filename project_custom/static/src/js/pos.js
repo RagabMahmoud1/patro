@@ -8,13 +8,12 @@ odoo.define('project_custom.pos_custom2', function (require) {
     const utils = require('web.utils');
     const _t = core._t;
     const round_pr = utils.round_precision;
-    const _ = require('_');
-    const moment = require('moment');
+    // underscore (_) and moment are available globally in Odoo
     
     // Extend Product to fix get_price for min_quantity = 1
     // The issue is that rules need to be sorted by min_quantity desc and the condition should be <= not <
-    const Product = models.Product;
-    Product = Product.extend({
+    var OriginalProduct = models.Product;
+    models.Product = OriginalProduct.extend({
         get_price: function(pricelist, quantity, price_extra){
             var self = this;
             var date = moment();
@@ -116,8 +115,8 @@ odoo.define('project_custom.pos_custom2', function (require) {
     
     // Extend Orderline to override get_taxed_lst_unit_price
     // Use the actual product base price (lst_price) not the pricelist price
-    const Orderline = models.Orderline;
-    Orderline = Orderline.extend({
+    var OriginalOrderline = models.Orderline;
+    models.Orderline = OriginalOrderline.extend({
         get_taxed_lst_unit_price: function(){
             // Use the actual product base price (lst_price) not the pricelist price
             const product = this.get_product();

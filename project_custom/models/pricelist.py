@@ -153,8 +153,8 @@ class Price(models.Model):
             for rule in items:
                 # Use the standard _is_applicable_for method which handles min_quantity correctly
                 if not rule._is_applicable_for(product, qty_in_product_uom):
-                    continue
-                
+                        continue
+
                 # Additional checks for custom fields (session_id and ore_id)
                 if rule.session_id and product.session_id.id != rule.session_id.id:
                     continue

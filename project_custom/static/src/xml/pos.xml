@@ -300,18 +300,18 @@
         </t>
     <t t-name="ClientListScreen" t-inherit="point_of_sale.ClientListScreen" t-inherit-mode="extension" owl="1">
         <xpath expr="//th[hasclass('client-line-last-column-placeholder')]" position="after">
-            <t t-if="env.pos.get_cashier().can_edit_price_list">
-                <th class="client-line-open-link"></th>
-            </t>
+                      <t t-if="env.pos.get_cashier().can_edit_price_list">
+          <th class="client-line-open-link"></th>
+                      </t>
         </xpath>
     </t>
     <t t-name="ClientLine" t-inherit="point_of_sale.ClientLine" t-inherit-mode="extension" owl="1">
         <xpath expr="//td[hasclass('client-line-last-column-placeholder')]" position="after">
-            <t t-if="env.pos.get_cashier().can_edit_price_list">
-                <td class="client-line-open-link" t-att-class="highlight">
-                    <a t-att-href="getPartnerLink()" target="_blank" t-on-click.stop=""><i class="fa fa-external-link" aria-hidden="true"></i></a>
-                </td>
-            </t>
+                      <t t-if="env.pos.get_cashier().can_edit_price_list">
+         <td class="client-line-open-link" t-att-class="highlight">
+                <a t-att-href="getPartnerLink()" target="_blank" t-on-click.stop=""><i class="fa fa-external-link" aria-hidden="true"></i></a>
+            </td>
+                      </t>
         </xpath>
     </t>
     <t t-name="TicketScreen" t-inherit="point_of_sale.TicketScreen" t-inherit-mode="extension" owl="1">
