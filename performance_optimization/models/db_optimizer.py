@@ -58,7 +58,7 @@ class DatabaseOptimizer(models.TransientModel):
         """Create all performance indexes"""
         self._log('Creating database indexes...')
         cr = self.env.cr
-
+        
         indexes = [
             # ============================================
             # Product Product Indexes
@@ -133,7 +133,7 @@ class DatabaseOptimizer(models.TransientModel):
                  WHERE table_name=%s AND column_name=%s
             """, (table, column))
             return bool(cr.fetchone())
-
+        
         for index_name, table_name, columns in indexes:
             try:
                 missing = [c for c in columns if not _column_exists(table_name, c)]
@@ -147,7 +147,7 @@ class DatabaseOptimizer(models.TransientModel):
                 # ensure cursor is usable after a failed statement
                 cr.rollback()
                 self._log(f'  ✗ {index_name}: {str(e)}')
-
+        
         self._log('Indexes created!')
 
     def _analyze_tables(self):

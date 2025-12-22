@@ -99,9 +99,11 @@ class ResPartner(models.Model):
         return record
 
     def action_after(self):
-        lines = self.env['followup.line'].search([(
+        # Use sudo() to bypass access rights for POS users
+        lines = self.env['followup.line'].sudo().search([(
             'followup_id.company_id', '=', self.env.company.id)])
         if lines:
             record = self.get_delay()
             for i in record:
                 return i['delay']
+        return 0  # Return default value if no lines found
