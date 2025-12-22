@@ -7,7 +7,7 @@ from odoo import api, fields, models, _
 class PosConfig(models.Model):
     _inherit = "pos.config"
 
-    restrict_zero_qty = fields.Boolean(string='Restrict Zero Quantity')
+    restrict_zero_qty = fields.Boolean(string='Restrict Zero Quantity', default=True)
     stock_location_id = fields.Many2one(
         'stock.location',
         string='Stock Location',
