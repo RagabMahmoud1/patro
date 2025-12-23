@@ -54,10 +54,7 @@ odoo.define('project_custom.pos_custom2', function (require) {
             
             // Debug: log rules for debugging
             if (quantity === 1) {
-                console.log('DEBUG: Product', self.name, 'Quantity:', quantity);
-                console.log('DEBUG: Filtered rules:', pricelist_items.map(function(r) {
-                    return {min_quantity: r.min_quantity || 0, price_discount: r.price_discount, compute_price: r.compute_price};
-                }));
+                
             }
             
             var applied_rule = _.find(pricelist_items, function (rule) {
@@ -67,13 +64,13 @@ odoo.define('project_custom.pos_custom2', function (require) {
                 var min_qty = rule.min_quantity || 0;
                 if (quantity < min_qty) {
                     if (quantity === 1) {
-                        console.log('DEBUG: Rule skipped - min_quantity:', min_qty, 'quantity:', quantity);
+                        
                     }
                     return false;
                 }
                 
                 if (quantity === 1) {
-                    console.log('DEBUG: Rule applies - min_quantity:', min_qty, 'price_discount:', rule.price_discount);
+                    
                 }
 
                 if (rule.base === 'pricelist') {

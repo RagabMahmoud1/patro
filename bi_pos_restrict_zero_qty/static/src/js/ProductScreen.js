@@ -23,13 +23,15 @@ odoo.define('bi_pos_restrict_zero_qty.productScreen', function(require) {
                     return;
                 }
                 
-                // Get product IDs from order lines (only storable products)
+                // Get product IDs from order lines (only storable products with POSITIVE quantity)
+                // Negative quantities = returns, should NOT be restricted
                 let productIds = [];
-                let productQtyMap = {};  // product_id -> requested quantity
+                let productQtyMap = {};  // product_id -> requested quantity (only positive/sales)
                 
                 for (let line of lines) {
                     let prd = line.product;
-                    if (prd.type === 'product') {
+                    // Only check storable products with positive quantity (sales, not returns)
+                    if (prd.type === 'product' && line.quantity > 0) {
                         if (!productQtyMap[prd.id]) {
                             productQtyMap[prd.id] = 0;
                             productIds.push(prd.id);
