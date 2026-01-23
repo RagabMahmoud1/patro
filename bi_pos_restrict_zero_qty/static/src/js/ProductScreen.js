@@ -95,7 +95,7 @@ odoo.define('bi_pos_restrict_zero_qty.productScreen', function(require) {
                     
                     console.log('Product:', product.display_name, 'Available:', available, 'Requested:', requested);
                     
-                    if (available <= 0) {
+                    if (available <= 0 && requested > 0) {
                         hasError = true;
                         self.showPopup('ErrorPopup', {
                             title: self.env._t('Out of Stock'),
